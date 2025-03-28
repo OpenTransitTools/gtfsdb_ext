@@ -13,11 +13,10 @@
 - pip install poetry
 - git clone https://github.com/OpenTransitTools/gtfsdb_ext.git
 - cd gtfsdb_ext
-- poetry install (btw, if psycopg2 fails to install, do the following:)
-  - poetry run pip3 install psycopg2-binary
-  - sorry for the hack ... not sure of another way to make poetry do what pip does
-  - (note: maybe move to psycopg 3.x?  ver 3.0.18 is the last py 3.6 supported version)
+- poetry install
+- poetry run pip3 install psycopg2-binary
+  - sorry for this hack ... if psycopg2-binary is a dependency, poetry tries to build the C source
 
 ### run
-- poetry run blah!
+- poetry run 
 - ls blah
