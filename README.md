@@ -13,6 +13,7 @@
 - pip install poetry
 - git clone https://github.com/OpenTransitTools/gtfsdb_ext.git
 - cd gtfsdb_ext
+- git update-index --assume-unchanged poetry.lock
 - poetry install
 - poetry run pip3 install psycopg2-binary 
   - this last step might be needed if you run things and get a psycopg2 missing dependency error
