@@ -14,9 +14,18 @@
 - git clone https://github.com/OpenTransitTools/gtfsdb_ext.git
 - cd gtfsdb_ext
 - poetry install
-- poetry run pip3 install psycopg2-binary
-  - sorry for this hack ... if psycopg2-binary is a dependency, poetry tries to build the C source
+- poetry run pip3 install psycopg2-binary 
+  - this last step might be needed if you run things and get a psycopg2 missing dependency error
+  - appologies for this hack: having psycopg2-binary as a dependency, poetry tries to build the C source
 
-### run
-- poetry run 
-- ls blah
+### applications
+- poetry run shared_stops_report
+  - shared stop report shows stop relationships between 
+  - show blah...
+
+- poetry run shared_stops_populate
+  - populate the gtfsdb stops.shared_stops column
+
+- poetry run gtfsdb-load -OR- gtfsdb-current-load
+  - the same cmd-line apps from the gtfsdb project (just via this project / poetry)
+  - see https://github.com/OpenTransitTools/gtfsdb?tab=readme-ov-file#install-from-source-via-github-if-you-want-the-latest-code-
