@@ -5,6 +5,11 @@ import logging
 log = logging.getLogger(__name__)
 
 
+def set_shared_stop(db, shared_stops_val, feed_id, stop_id, table="STOPS"):
+    sql = "UPDATE {}.{} SET shared_stops = '{}' WHERE stop_id = '{}'".format(feed_id, table, shared_stops_val, stop_id)
+    return do_sql(db, sql)
+
+
 def find_stop(db, feed_id, stop_id, table="STOPS"):
     sql = "select * from {}.{} where stop_id = '{}'".format(feed_id, table, stop_id)
     return do_sql(db, sql)
@@ -13,7 +18,6 @@ def find_stop(db, feed_id, stop_id, table="STOPS"):
 def nearest(db, feed_id, stop_id, dist, src_feed_id, table="STOPS"):
     sql = "select * from {}.{} stop where st_dwithin(stop.geom, (select t.geom from {}.stops t where stop_id = '{}'), {})".format(feed_id, table, src_feed_id, stop_id, dist)
     return do_sql(db, sql)
-
 
 
 nearest_hits = {}
@@ -60,6 +64,5 @@ def get_nearest_record(db, feed_id, stop_id, dist, dist_desc, src_feed_id, ignor
                 'dist_desc': dist_desc,
                 'share': share
             }
-
 
     return ret_val

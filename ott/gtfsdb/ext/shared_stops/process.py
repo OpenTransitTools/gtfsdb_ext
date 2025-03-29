@@ -61,6 +61,36 @@ def shared_stops_parser(stops_csv_file, db, src_feed_id="TRIMET"):
     return ret_val
 
 
+def update_db(stops_csv_file, db, src_feed_id="TRIMET"):
+    stop_dict = get_csv(stops_csv_file)
+    for s in stop_dict:
+
+        # step 1: get stop_id we're looking for in given feed_id
+        stop_id = s['TRIMET_ID']
+        feed_id = s['FEED_ID']
+
+        # step 2: skip unsupported agencies
+        if feed_id in IGNORE_AGENCIES:
+            continue
+
+        stop = query.find_stop(db, src_feed_id, stop_id, "CURRENT_STOPS")
+        if not stop:
+            stop = query.find_stop(db, src_feed_id, stop_id)
+        if stop:
+            print(stop)
+            query.set_shared_stop(db, "X {} X".format(stop_id), src_feed_id, stop_id)
+            query.set_shared_stop(db, "X {} X".format(stop_id), src_feed_id, stop_id, "CURRENT_STOPS")
+        else:
+            print("{}.{} not found in the feed.".format(src_feed_id, stop_id))
+
+
+def update_shared_stops():
+    args, kwargs = get_args()
+    db = Database(**kwargs)
+    #ss = shared_stops_parser(args.file, db)
+    ss = update_db(args.file, db)
+
+
 def create_report():
     from . import report
     args, kwargs = get_args()
