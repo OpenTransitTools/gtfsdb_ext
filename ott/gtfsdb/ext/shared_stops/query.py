@@ -14,7 +14,7 @@ def to_stop_dict(rec, table, i=0):
     try:
         a = "?"
         if table == "CURRENT_STOPS":
-            a = rec[i+15]
+            a = rec[i+6]
 
         ret_val = {
             'a': a,
@@ -22,6 +22,7 @@ def to_stop_dict(rec, table, i=0):
             'code': rec[i + 1],
             'lat': rec[i + 2],
             'lon': rec[i + 3],
+            'name': rec[i + 4],
         }
     except:
         ret_val = None
