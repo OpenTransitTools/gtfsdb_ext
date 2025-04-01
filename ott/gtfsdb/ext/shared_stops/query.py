@@ -15,8 +15,26 @@ def find_stop(db, feed_id, stop_id, table="STOPS"):
     return do_sql(db, sql)
 
 
+def stop_distance(db, feed_id_a, stop_id_a, feed_id_b, stop_id_b):
+    """"
+    find distance between 2 stops, selected by stop_id (and feed_id)
+    :return: distance in meters
+    :note: https://postgis.net/docs/ST_DistanceSphere.html
+    """
+    sql = "select ST_DistanceSphere(a.geom, b.geom) from {}.stops a, {}.stops b where a.stop_id = '{}' and b.stop_id = '{}'".format(feed_id_a, feed_id_b, stop_id_a, stop_id_b)
+    return do_sql(db, sql)
+
+
+def nearest_stops(db, feed_id, stop_id, dist, src_feed_id, table="STOPS", limit=10):
+  sql = "select ST_DistanceSphere(a.geom, b.geom) as meters_apart, a.* from {}.{} a, {}.stops b where b.stop_id = '{}' order by 1 limit {}".format(feed_id, table, src_feed_id, stop_id, limit)
+  #print(sql)
+  return do_sql(db, sql)
+
+
+
 def nearest(db, feed_id, stop_id, dist, src_feed_id, table="STOPS"):
-    sql = "select * from {}.{} stop where st_dwithin(stop.geom, (select t.geom from {}.stops t where stop_id = '{}'), {})".format(feed_id, table, src_feed_id, stop_id, dist)
+    sql = "select * from {}.{} stop where ST_DWithin(stop.geom, (select t.geom from {}.stops t where stop_id = '{}'), {})".format(feed_id, table, src_feed_id, stop_id, dist)
+    #print(sql)
     return do_sql(db, sql)
 
 
@@ -30,29 +48,36 @@ def is_already_seen(fs):
     return ret_val
         
 
-def get_nearest_record(db, feed_id, stop_id, dist, dist_desc, src_feed_id, ignore_seen_filter=False):
+def get_nearest_record(db, feed_id, stop_id, query_dist, dist_desc, src_feed_id, ignore_seen_filter=False):
     ret_val = None
 
     from_current_stops = False
     from_stops_table = False
 
-    result = nearest(db, feed_id, stop_id, dist, src_feed_id, "CURRENT_STOPS")
+    result = nearest(db, feed_id, stop_id, query_dist, src_feed_id, "CURRENT_STOPS")
     if result:
         from_current_stops = True
     else:
-        result = nearest(db, feed_id, stop_id, dist, src_feed_id, "STOPS")
+        result = nearest(db, feed_id, stop_id, query_dist, src_feed_id, "STOPS")
         if result:
             from_stops_table = True
+
+    dist = 1111111.11111111
 
     if from_current_stops or from_stops_table:
         src = mk_feed_rec(src_feed_id, stop_id, src_feed_id)  # todo: call current for actual agency id (PSC or AT)
 
         share = []
         for r in result:
+            sid = None
             if from_stops_table:
-                rec = mk_feed_rec(feed_id, r[0])
+                sid = r[0]
+                rec = mk_feed_rec(feed_id, sid)
             elif from_current_stops:
-                rec = mk_feed_rec(feed_id, r[7], r[0])
+                sid = r[7]
+                rec = mk_feed_rec(feed_id, sid, r[0])
+
+            dist = stop_distance(db, src_feed_id, stop_id, feed_id, sid)
 
             if rec and (ignore_seen_filter or not is_already_seen(rec)):
                 share.append(rec)
@@ -61,6 +86,7 @@ def get_nearest_record(db, feed_id, stop_id, dist, dist_desc, src_feed_id, ignor
             ret_val = { 
                 'src': src,
                 'dist': dist,
+                'query_dist': query_dist,
                 'dist_desc': dist_desc,
                 'share': share
             }

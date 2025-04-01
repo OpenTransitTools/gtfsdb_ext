@@ -57,7 +57,7 @@ def shared_stops_parser(stops_csv_file, db, src_feed_id="TRIMET"):
                     if result:
                         ret_val[BLOCKS_AWAY].append(result)
                     else:
-                        ret_val[NOT_FOUND].append({'feed_stop': mk_feed_stop(src_feed_id, stop_id), 'share': feed_id})
+                        ret_val[NOT_FOUND].append({'feed_stop': mk_feed_stop(src_feed_id, stop_id), 'share': feed_id, 's': s})
     return ret_val
 
 
