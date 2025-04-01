@@ -98,3 +98,52 @@ def create_report():
     ss = shared_stops_parser(args.file, db)
 
     report.generate_report(ss)
+
+
+def build_shared_stops_data(stops_csv_file, db, src_feed_id="TRIMET"):
+    """
+    build a fairly complex data structure based on:
+     a) shared stops .csv (query from TRANS)
+     b) stop info from gtfsdb (for trimet stop)
+     b) nearest stops (gtfsdb) from other agencies
+     c) current stops data (agency id)
+
+    reads shared_stops.csv, then queries the database to build upon that structure 
+    """
+    stop_dict = get_csv(stops_csv_file)
+    for s in stop_dict:
+
+        s['agencies'] = None
+        s['src_stop'] = None
+        s['nearest'] = []
+
+        # step 1: get stop_id we're looking for in given feed_id
+        stop_id = s['TRIMET_ID']  # todo change this to STOP_ID
+        feed_id = s['FEED_ID']
+
+        # step 2: make sure we have an agency for this feed (else might be a non-supported feed)
+        agencies = query.agencies(db, feed_id)
+        if not agencies:
+            continue
+        s['agencies'] = agencies
+
+        # step 3: get the target stop record (continue if we don't have a source stop ... ala not in feed)
+        stop = query.find_stop(db, src_feed_id, stop_id, "CURRENT_STOPS")
+        if not stop:
+            stop = query.find_stop(db, src_feed_id, stop_id)       
+        if not stop:
+            continue
+        s['src_stop'] = stop
+
+        # step 4: nearest shared stops
+        s['nearest'] = query.nearest_stops(db, feed_id, stop_id, src_feed_id, table="STOPS", limit=5)
+
+    return stop_dict
+
+
+def create_report():
+    from . import report
+    args, kwargs = get_args()
+    db = Database(**kwargs)
+    ss = build_shared_stops_data(args.file, db)
+    print(ss)

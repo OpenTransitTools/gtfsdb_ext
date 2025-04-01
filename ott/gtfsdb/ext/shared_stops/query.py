@@ -5,6 +5,29 @@ import logging
 log = logging.getLogger(__name__)
 
 
+def to_stop_dict(rec, table, i=0):
+    """
+    stupid sql record mapping
+    note: slightly fragile ... if gtfsdb model for stops changes (doesn't happen often), this might break
+    """
+    ret_val = None
+    try:
+        a = "?"
+        if table == "CURRENT_STOPS":
+            a = rec[i+15]
+
+        ret_val = {
+            'a': a,
+            'id': rec[i],
+            'code': rec[i + 1],
+            'lat': rec[i + 2],
+            'lon': rec[i + 3],
+        }
+    except:
+        ret_val = None
+    return ret_val
+
+
 def set_shared_stop(db, shared_stops_val, feed_id, stop_id, table="STOPS"):
     sql = "UPDATE {}.{} SET shared_stops = '{}' WHERE stop_id = '{}'".format(feed_id, table, shared_stops_val, stop_id)
     return do_sql(db, sql)
@@ -25,16 +48,20 @@ def stop_distance(db, feed_id_a, stop_id_a, feed_id_b, stop_id_b):
     return do_sql(db, sql)
 
 
-def nearest_stops(db, feed_id, stop_id, dist, src_feed_id, table="STOPS", limit=10):
+def nearest_stops(db, feed_id, stop_id, src_feed_id, table="STOPS", limit=10):
   sql = "select ST_DistanceSphere(a.geom, b.geom) as meters_apart, a.* from {}.{} a, {}.stops b where b.stop_id = '{}' order by 1 limit {}".format(feed_id, table, src_feed_id, stop_id, limit)
   #print(sql)
   return do_sql(db, sql)
 
 
-
 def nearest(db, feed_id, stop_id, dist, src_feed_id, table="STOPS"):
     sql = "select * from {}.{} stop where ST_DWithin(stop.geom, (select t.geom from {}.stops t where stop_id = '{}'), {})".format(feed_id, table, src_feed_id, stop_id, dist)
     #print(sql)
+    return do_sql(db, sql)
+
+
+def agencies(db, feed_id, limit=50, table="AGENCY"):
+    sql = "select * from {}.{} limit {}".format(feed_id, table, limit)
     return do_sql(db, sql)
 
 
