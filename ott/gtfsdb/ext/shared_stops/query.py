@@ -5,19 +5,22 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def to_stop_dict(rec, table, i=0):
+def to_stop_dict(rec, i=0, feed_id=None, def_agency=None, table="CURRENT_STOPS"):
     """
     stupid sql record mapping
     note: slightly fragile ... if gtfsdb model for stops changes (doesn't happen often), this might break
     """
     ret_val = None
     try:
-        a = "?"
+        a = def_agency
         if table == "CURRENT_STOPS":
             a = rec[i+6]
+        if a is None:
+            a = def_agency
 
         ret_val = {
             'a': a,
+            'f': feed_id,
             'id': rec[i],
             'code': rec[i + 1],
             'lat': rec[i + 2],

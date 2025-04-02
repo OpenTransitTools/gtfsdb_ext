@@ -20,13 +20,14 @@
   - appologies for this hack: having psycopg2-binary as a dependency, poetry tries to build the C source
 
 ### applications
-- poetry run shared_stops_report
-  - shared stop report shows stop relationships between 
-  - show blah...
+ - shared-stops report
+   - show the multi-agency stop relationships, where multiple agencies (and multiple GTFS feeds) serve the same physical location (as well as probably sharing the same signage)
+   - poetry run shared-stops-report -d postgresql://ott:ott@127.0.0.1:5432/ott ott/gtfsdb/ext/shared_stops/data/shared_stops.csv
 
-- poetry run shared_stops_populate
-  - populate the gtfsdb stops.shared_stops column
+ - shared-stops populate
+   - populate the gtfsdb stops.shared_stops column
+   - poetry run shared_stops_populate -d postgresql://ott:ott@127.0.0.1:5432/ott ott/gtfsdb/ext/shared_stops/data/shared_stops.csv
 
-- poetry run gtfsdb-load -OR- gtfsdb-current-load
-  - the same cmd-line apps from the gtfsdb project (just via this project / poetry)
-  - see https://github.com/OpenTransitTools/gtfsdb?tab=readme-ov-file#install-from-source-via-github-if-you-want-the-latest-code-
+ - poetry run gtfsdb-load -OR- gtfsdb-current-load
+   - the same cmd-line apps from the gtfsdb project (just via this project / poetry)
+   - see https://github.com/OpenTransitTools/gtfsdb?tab=readme-ov-file#install-from-source-via-github-if-you-want-the-latest-code-

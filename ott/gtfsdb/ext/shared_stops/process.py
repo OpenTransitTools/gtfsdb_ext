@@ -141,9 +141,62 @@ def build_shared_stops_data(stops_csv_file, db, src_feed_id="TRIMET"):
     return stop_dict
 
 
+def mk_shared_stop(rec):
+    
+    id=rec.get('TRIMET_ID')
+    desc=rec.get('AGENCY_DESC')
+    aid=rec.get('AGENCY_ID_TRANS')
+    feed=rec.get('FEED_ID')
+    print("{} -> {}({}) ".format(id, desc, aid))
+
+    # agencies
+    age=rec.get('agencies')
+    def_ag = "?"
+    if age:
+        if len(age) == 1:
+            def_ag = age[0][1]
+        else:
+            def_ag = age[0][1] + "?"
+    
+    
+
+    # nearest stops
+    p = 444444.4
+    near = rec.get('nearest')
+    for n in near:
+        d = n[0]
+        if d > p + 1.0:
+            break
+
+        m = query.to_stop_dict(n, 1, feed_id=feed, def_agency=def_ag)
+        print(d, m)
+        p = d
+
+
 def create_report():
     from . import report
     args, kwargs = get_args()
     db = Database(**kwargs)
-    ss = build_shared_stops_data(args.file, db)
-    print(ss)
+
+    unsuppored = {}
+    no_stop = {}
+
+    stop_recs = build_shared_stops_data(args.file, db)
+    for s in stop_recs:
+        src = s.get('src_stop')
+        agy = s.get('agencies')
+        if agy:
+            if src:
+                #print(s)
+                mk_shared_stop(s)
+                x = query.to_stop_dict(src[0], feed_id="TRIMET")
+                print(x)
+                print()
+            else:
+                no_stop[s.get('TRIMET_ID')] = s
+        else:
+            unsuppored[s.get('AGENCY_DESC')] = s.get('AGENCY_DESC')
+    
+    print("")
+    print("These agencies are not supported", unsuppored.keys())
+    print("These stops are not in gtfs: ", no_stop.keys())
