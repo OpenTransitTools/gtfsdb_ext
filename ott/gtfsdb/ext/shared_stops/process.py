@@ -51,7 +51,7 @@ def build_shared_stops_data(stops_csv_file, db, src_feed_id="TRIMET"):
         s['nearest'] = []
 
         # step 1: get stop_id we're looking for in given feed_id
-        stop_id = s['TRIMET_ID']  # todo change this to STOP_ID
+        stop_id = s['STOP_ID']  # todo change this to STOP_ID
         feed_id = s['FEED_ID']
 
         # step 2: make sure we have an agency for this feed (else might be a non-supported feed)
@@ -75,14 +75,15 @@ def build_shared_stops_data(stops_csv_file, db, src_feed_id="TRIMET"):
 
 
 def db_rec_to_shared_stop(rec):
-    
-    id=rec.get('TRIMET_ID')
+
+    # step 1: parse the elements from shared_stops.csv    
+    id=rec.get('STOP_ID')
     desc=rec.get('AGENCY_DESC')
-    aid=rec.get('AGENCY_ID_TRANS')
+    aid=rec.get('AGENCY')
     feed=rec.get('FEED_ID')
     print("{} -> {}({}) ".format(id, desc, aid))
 
-    # agencies
+    # step 2: find all the agencies for a given feed
     age=rec.get('agencies')
     def_ag = "?"
     if age:
@@ -91,7 +92,7 @@ def db_rec_to_shared_stop(rec):
         else:
             def_ag = age[0][1] + "?"
 
-    # nearest stops
+    # step 3: nearest stops
     p = 444444.4
     near = rec.get('nearest')
     for n in near:
