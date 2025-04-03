@@ -74,14 +74,14 @@ def build_shared_stops_data(stops_csv_file, db, src_feed_id="TRIMET"):
     return stop_dict
 
 
-def db_rec_to_shared_stop(rec):
+def db_rec_to_shared_stop(rec, near_skip=0):
+
 
     # step 1: parse the elements from shared_stops.csv    
     id=rec.get('STOP_ID')
     desc=rec.get('AGENCY_DESC')
     aid=rec.get('AGENCY')
     feed=rec.get('FEED_ID')
-    print("{} -> {}({}) ".format(id, desc, aid))
 
     # step 2: find all the agencies for a given feed
     age=rec.get('agencies')
@@ -93,21 +93,37 @@ def db_rec_to_shared_stop(rec):
             def_ag = age[0][1] + "?"
 
     # step 3: nearest stops
+    stops = []
+    distance = None
     p = 444444.4
     near = rec.get('nearest')
-    for n in near:
+    for i, n in enumerate(near):
         d = n[0]
         if d > p + 1.0:
             break
+        p = d
+        distance = d
 
         m = query.to_stop_dict(n, 1, feed_id=feed, def_agency=def_ag)
-        print(d, m)
-        p = d
+        stops.append(m)
+
+    ret_val = {
+        'desc': "{} -> {}({}) ".format(id, desc, aid),
+        'distance': distance,
+        'stops': stops
+    }
+    return ret_val
 
 
 def shared_stops_parser(csvfile, db):
     unsuppored = {}
     no_stop = {}
+
+    ret_val = {
+        'unsuppored': unsuppored,
+        'no_stop': no_stop,
+        'shared': []
+    }
 
     stop_recs = build_shared_stops_data(csvfile, db)
     for s in stop_recs:
@@ -116,18 +132,16 @@ def shared_stops_parser(csvfile, db):
         if agy:
             if src:
                 #print(s)
-                db_rec_to_shared_stop(s)
+                z = db_rec_to_shared_stop(s)
                 x = query.to_stop_dict(src[0], feed_id="TRIMET")
-                print(x)
-                print()
+                z['stops'].insert(0, x)
+                ret_val['shared'].append(z)
             else:
                 no_stop[s.get('TRIMET_ID')] = s
         else:
             unsuppored[s.get('AGENCY_DESC')] = s.get('AGENCY_DESC')
-    
-    print("")
-    print("These agencies are not supported", unsuppored.keys())
-    print("These stops are not in gtfs: ", no_stop.keys())
+
+    return ret_val
 
 
 def update_shared_stops():
@@ -142,5 +156,6 @@ def create_report():
     args, kwargs = get_args()
     db = Database(**kwargs)
     ss = shared_stops_parser(args.file, db)
+    #return ss['shared'][0]
     #report.generate_report(ss)
 

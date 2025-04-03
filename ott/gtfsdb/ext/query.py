@@ -19,10 +19,10 @@ def to_stop_dict(rec, i=0, feed_id=None, def_agency=None, table="CURRENT_STOPS")
             a = def_agency
 
         ret_val = {
-            'a': a,
-            'f': feed_id,
-            'id': rec[i],
-            'code': rec[i + 1],
+            'agency_id': a,
+            'feed_id': feed_id,
+            'stop_id': rec[i],
+            'stop_code': rec[i + 1],
             'lat': rec[i + 2],
             'lon': rec[i + 3],
             'name': rec[i + 4],
