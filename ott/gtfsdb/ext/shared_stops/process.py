@@ -9,22 +9,15 @@ from ..utils import *
 #import inspect
 #this_module_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
-
 def update_db(stops_csv_file, db, src_feed_id="TRIMET"):
     stop_dict = get_csv(stops_csv_file)
     for s in stop_dict:
 
         # step 1: get stop_id we're looking for in given feed_id
-        stop_id = s['TRIMET_ID']
+        stop_id = s['STOP_ID']
         feed_id = s['FEED_ID']
 
-        # step 2: skip unsupported agencies
-        if feed_id in IGNORE_AGENCIES:
-            continue
-
-        stop = query.find_stop(db, src_feed_id, stop_id, "CURRENT_STOPS")
-        if not stop:
-            stop = query.find_stop(db, src_feed_id, stop_id)
+        stop = query.find_stop(db, src_feed_id, stop_id)
         if stop:
             print(stop)
             query.set_shared_stop(db, "X {} X".format(stop_id), src_feed_id, stop_id)
@@ -51,7 +44,7 @@ def build_shared_stops_data(stops_csv_file, db, src_feed_id="TRIMET"):
         s['nearest'] = []
 
         # step 1: get stop_id we're looking for in given feed_id
-        stop_id = s['STOP_ID']  # todo change this to STOP_ID
+        stop_id = s['STOP_ID']
         feed_id = s['FEED_ID']
 
         # step 2: make sure we have an agency for this feed (else might be a non-supported feed)
@@ -75,8 +68,6 @@ def build_shared_stops_data(stops_csv_file, db, src_feed_id="TRIMET"):
 
 
 def db_rec_to_shared_stop(rec, near_skip=0):
-
-
     # step 1: parse the elements from shared_stops.csv    
     id=rec.get('STOP_ID')
     desc=rec.get('AGENCY_DESC')
@@ -156,6 +147,5 @@ def create_report():
     args, kwargs = get_args()
     db = Database(**kwargs)
     ss = shared_stops_parser(args.file, db)
-    #return ss['shared'][0]
-    #report.generate_report(ss)
+    report.generate_report(ss)
 

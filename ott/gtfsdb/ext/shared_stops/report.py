@@ -5,6 +5,12 @@ log = logging.getLogger(__name__)
 
 
 def generate_report(ss):
+    for s in ss['shared']:
+        print(s)
+
+
+
+def Xgenerate_report(ss):
     url = "https://rtp.trimet.org/rtp/#/schedule"
 
     print("There are {} shared stops defined in TRANS.".format(len(ss['src'])))
