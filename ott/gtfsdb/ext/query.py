@@ -5,7 +5,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def to_stop_dict(rec, i=0, feed_id=None, def_agency=None, table="CURRENT_STOPS"):
+def to_stop_dict(rec, i=0, feed_id=None, def_agency=None, table="CURRENT_STOPS", distance=None):
     """
     stupid sql record mapping
     note: slightly fragile ... if gtfsdb model for stops changes (doesn't happen often), this might break
@@ -26,6 +26,7 @@ def to_stop_dict(rec, i=0, feed_id=None, def_agency=None, table="CURRENT_STOPS")
             'lat': rec[i + 2],
             'lon': rec[i + 3],
             'name': rec[i + 4],
+            'distance': distance
         }
     except:
         ret_val = None
@@ -54,13 +55,11 @@ def stop_distance(db, feed_id_a, stop_id_a, feed_id_b, stop_id_b):
 
 def nearest_stops(db, feed_id, stop_id, src_feed_id, table="STOPS", limit=10):
   sql = "select ST_DistanceSphere(a.geom, b.geom) as meters_apart, a.* from {}.{} a, {}.stops b where b.stop_id = '{}' order by 1 limit {}".format(feed_id, table, src_feed_id, stop_id, limit)
-  #print(sql)
   return do_sql(db, sql)
 
 
 def nearest(db, feed_id, stop_id, dist, src_feed_id, table="STOPS"):
     sql = "select * from {}.{} stop where ST_DWithin(stop.geom, (select t.geom from {}.stops t where stop_id = '{}'), {})".format(feed_id, table, src_feed_id, stop_id, dist)
-    #print(sql)
     return do_sql(db, sql)
 
 

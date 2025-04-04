@@ -1,13 +1,21 @@
+import os
+import inspect
+from mako.template import Template
+
 from ..utils import *
 
 import logging
 log = logging.getLogger(__name__)
 
 
-def generate_report(ss):
-    for s in ss['shared']:
-        print(s)
+this_module_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
+
+def generate_report(ss, tmpl = 'report.mako'):
+    stops = sorted(ss['shared'], key=lambda x: x['distance'], reverse=True)
+    loader_tmpl = Template(filename=os.path.join(this_module_dir, 'tmpl', tmpl))
+    report = loader_tmpl.render(stops=stops)
+    print(report)
 
 
 def Xgenerate_report(ss):
