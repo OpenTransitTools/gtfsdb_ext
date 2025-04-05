@@ -53,16 +53,15 @@ ${end_html()}
 </%def>
 
 
-<%def name="link(s)"><a href="https://rtp.trimet.org/rtp/#/nearby/${s.get('lat')},${s.get('lon')}" target="#">${s.get('feed_id')} ${s.get('stop_id')} ${"</a>" if s.get('stop_id')==s.get('stop_code') else " (<i>" + s.get('stop_code') + "</i>)</a>"}</%def>
+<%def name="link(s)">${"*" if s.get('duplicate') else ""}<a href="https://rtp.trimet.org/rtp/#/nearby/${s.get('lat')},${s.get('lon')}" target="#">${s.get('feed_id')} ${s.get('stop_id')} ${"</a>" if s.get('stop_id')==s.get('stop_code') else " (<i>" + s.get('stop_code') + "</i>)</a>"}</%def>
 
 
-<%def name="urls(s)">\
-%for i, ss in enumerate(s.get('stops')):
+<%def name="urls(ss)">\
+%for i, s in enumerate(ss.get('stops')):
 %if i > 0:
-${link(ss)}${"<B>,</B>&nbsp;" if i+1<len(s.get('stops')) else ""}
+${link(s)}${"<B>,</B>&nbsp;" if i+1<len(ss.get('stops')) else ""}\
 %endif
 %endfor
-
 </%def>
 
 
@@ -70,7 +69,7 @@ ${link(ss)}${"<B>,</B>&nbsp;" if i+1<len(s.get('stops')) else ""}
     <tr>
       <td>${s.get('desc')}</td>
       <td>${s.get('distance')}</td>
-      <td>${"*" if s.get('duplicate') else ""}${link(s.get('stops', [])[0])}</td>
+      <td>${link(s.get('stops', [])[0])}</td>
       <td>${urls(s)}</td>
       <td>.</td>
       <td>.</td>

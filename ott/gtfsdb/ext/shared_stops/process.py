@@ -104,7 +104,6 @@ def db_rec_to_shared_stop(rec, skip=0):
         'distance': distance,
         'stops': stops,
         'filter': False,
-        'duplicate': False,
         'shared_id': ""
     }
     return ret_val
@@ -155,8 +154,7 @@ def shared_stops_parser(csvfile, db, src_feed_id):
 
     # step 2: run thru stop data to build up stops list, etc...
     for s in stop_recs:
-        id = s['STOP_ID']
-        fs = mk_feed_stop(s['FEED_ID'], id)
+        fs = mk_feed_stop(s['FEED_ID'], s['STOP_ID'])
         src = s.get('src_stop')
         agy = s.get('agencies')
         if agy:
@@ -168,11 +166,14 @@ def shared_stops_parser(csvfile, db, src_feed_id):
                 ret_val['shared'].append(z)
                 skips[fs] = skips[fs] - 1  # decriment skips, so that we pick up nearer stops on next hits
 
-                # check duplicat stops are marked
-                if id in duplicates:
-                    z['duplicate'] = True
-                    duplicates[id]['duplicate'] = True
-                duplicates[id] = z
+                # mark duplicate stops
+                for zs in z['stops']:
+                    id = mk_feed_stop(zs['feed_id'], zs['stop_id'])
+                    if id in duplicates:
+                        zs['duplicate'] = True
+                        duplicates[id]['duplicate'] = True
+                        s['duplicate'] = True
+                    duplicates[id] = zs
             else:
                 not_active[s.get('STOP_ID')] = s['FEED_ID']
         else:
