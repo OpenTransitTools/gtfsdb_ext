@@ -145,7 +145,7 @@ def shared_stops_parser(csvfile, db):
                 z['stops'].insert(0, x)
                 ret_val['shared'].append(z)
             else:
-                no_stop[s.get('TRIMET_ID')] = s
+                no_stop[s.get('STOP_ID')] = s['FEED_ID']
         else:
             unsuppored[s.get('AGENCY_DESC')] = s.get('AGENCY_DESC')
 

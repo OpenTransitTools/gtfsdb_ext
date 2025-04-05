@@ -1,61 +1,75 @@
+<%def name="start_html(src_agency='TRIMET')">\
 <html>
 <head>
-<title>Sortable table demo</title>
+  <title>Shared stops between ${src_agency} and other regional agencies</title>
 </head>
 <body>
+</%def>
+<%def name="end_html()">\
+</body>
+<%include file="/scripts.mako"/>
+</html>
+</%def>
+<%def name="start_table()">\
 <table class="sortable demo">
-    <thead>
-        <tr>
-            <th>No.</th>
-            <th>Model</th>
+  <thead>
+    <tr>
+      <th>stop id</th>
+      <th>distance (meters)</th>
+      <th>source stop</th>
+      <th>shared with</th>
     </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>1</td>
-            <td>Model S</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Model 3</td>
-        </tr>
-    </tbody>
+  </thead>
+  <tbody>
+</%def>
+<%def name="end_table()">\
+  </tbody>
 </table>
-
-<%def name="link(s)"><a href="https://rtp.trimet.org/rtp/#/nearby/${s.get('lat')},${s.get('lon')}">${s.get('feed_id')} ${s.get('stop_code')}\
+</%def>
+<%def name="link(s)"><a href="https://rtp.trimet.org/rtp/#/nearby/${s.get('lat')},${s.get('lon')}" target="#">${s.get('feed_id')} ${s.get('stop_code')}\
 %if s.get('stop_id') != s.get('stop_code'):
  (id ${s.get('stop_id')})\
 %endif
-</a></%def>
+</a>
+</%def>
+<%def name="urls(s)">\
+%for i, ss in enumerate(s.get('stops')):
+%if i == 0: 
+<td>${link(ss)}</td>
+%endif
+%endfor
+<td>
+%for i, ss in enumerate(s.get('stops')):
+%if i > 0:
+${link(ss)}
+%endif
+%endfor
+%if i > 1:
+* (${i} stops)
+%endif
+</td>
+</%def>
+<%def name="table_row(s)">\
+    <tr>
+      <td>${s.get('desc')}</td>
+      <td>${s.get('distance')}</td>
+      ${urls(s)}
+    </tr>
+</%def>
+<%def name="stop_url(stop_id, feed_id)"><a href="https://trimet.org/ride/stop.html?stop_id=${stop_id}" target="#">${stop_id}</a> (${feed_id}) </%def>
 
-<%def name="stop(s, z)">\
-${s.get('desc')} ${link(s.get('stops')[0])} and ${link(z)} are ${'%.2f'%(z.get('distance'))} meters apart\
-</%def>\
-\
-<%def name="loopr(n, k=10000)">\
-The following are ${n} to ${k} meters apart:
+${start_html()}
+<h2>There are ${len(stops)} shared stops that were found.</h2>
+</br>
+${start_table()}
 %for s in stops:
-%if s.get('distance') >= n and s.get('distance') < k:
-${stop(s, s.get('stops')[1])}
-%elif len(s.get('stops')) > 2:
-%for z in s.get('stops'):
-%if z.get('distance') >= n and z.get('distance') < k:
-${stop(s, z)}
-%endif
+${table_row(s)}\
 %endfor
-%endif
+${end_table()}
+<h4>note these agencies are currently unsupported: ${', '.join(str(v) for v in unsupported.values())}</h4>
+<h4>note these stops appear to be inactive (not in my GTFS): \
+%for k,v in no_stop.items():
+  ${stop_url(k, v)} \
 %endfor
-</%def>\
-
-${loopr(100)}
-
-${loopr(15, 100)}
-
-${loopr(5, 15)}
-
-${loopr(1, 5)}
-
-${loopr(0, 1)}
-</body>
-<%include file="scripts.mako" />
-</html>
+</h4>
+${end_html()}
