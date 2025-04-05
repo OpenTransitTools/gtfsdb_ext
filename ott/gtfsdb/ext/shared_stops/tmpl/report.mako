@@ -60,6 +60,7 @@ ${link(ss)}
       <td>.</td>
     </tr>
 </%def>
+
 <%def name="stop_url(stop_id, feed_id)"><a href="https://trimet.org/ride/stop.html?stop_id=${stop_id}" target="#">${stop_id}</a> (${feed_id}) </%def>
 
 ${start_html()}

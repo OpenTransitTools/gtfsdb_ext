@@ -9,6 +9,7 @@ from ..utils import *
 
 def update_db(shared_stops, db, src_feed_id):
     for s in shared_stops.get('shared'):
+        print(s)
         break
 
         # step 1: get stop_id we're looking for in given feed_id
@@ -35,7 +36,6 @@ def build_shared_stops_data(stops_csv_file, db, src_feed_id):
     reads shared_stops.csv, then queries the database to build upon that structure 
     """
     stop_dict = get_csv(stops_csv_file)
-
     for s in stop_dict:
         s['agencies'] = None
         s['src_stop'] = None
@@ -102,7 +102,10 @@ def db_rec_to_shared_stop(rec, skip=0):
     ret_val = {
         'desc': "{} -> {}({}) ".format(id, desc, aid),
         'distance': distance,
-        'stops': stops
+        'stops': stops,
+        'filter': False,
+        'duplicate': False,
+        'shared_id': ""
     }
     return ret_val
 
@@ -139,7 +142,7 @@ def shared_stops_parser(csvfile, db, src_feed_id):
 
     ret_val = {
         'unsuppored': unsuppored,
-        'no_stop': not_active,
+        'not_active': not_active,
         'shared': []
     }
 
@@ -148,10 +151,12 @@ def shared_stops_parser(csvfile, db, src_feed_id):
 
     # step 2: make skips (used in step 3) to determine if we have repeat stops, and need a the next nearest stop
     skips = make_skips(stop_recs)
+    duplicates = {}
 
     # step 2: run thru stop data to build up stops list, etc...
     for s in stop_recs:
-        fs = mk_feed_stop(s['FEED_ID'], s['STOP_ID'])
+        id = s['STOP_ID']
+        fs = mk_feed_stop(s['FEED_ID'], id)
         src = s.get('src_stop')
         agy = s.get('agencies')
         if agy:
@@ -162,17 +167,19 @@ def shared_stops_parser(csvfile, db, src_feed_id):
                 z['stops'].insert(0, x)
                 ret_val['shared'].append(z)
                 skips[fs] = skips[fs] - 1  # decriment skips, so that we pick up nearer stops on next hits
+
+                # check duplicat stops are marked
+                if id in duplicates:
+                    z['duplicate'] = True
+                    duplicates[id]['duplicate'] = True
+                duplicates[id] = z
             else:
                 not_active[s.get('STOP_ID')] = s['FEED_ID']
         else:
             unsuppored[s.get('AGENCY_DESC')] = s.get('AGENCY_DESC')
 
     # step 3a TODO: filter duplicates part A - count the number duplicate FEED:STOP
-    #import pdb; pdb.set_trace()
-    counts = make_counts(stop_recs, not_active)
-    for k,v in counts.items():
-        if v > 1:
-            print(k, v)
+
 
     return ret_val
 
