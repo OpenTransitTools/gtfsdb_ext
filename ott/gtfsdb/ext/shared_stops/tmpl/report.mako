@@ -4,22 +4,22 @@
 </head>
 <body>
 <table class="sortable demo">
-	<thead>
-		<tr>
-			<th>No.</th>
-			<th>Model</th>
-	</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>1</td>
-			<td>Model S</td>
-		</tr>
-		<tr>
-			<td>2</td>
-			<td>Model 3</td>
-		</tr>
-	</tbody>
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Model</th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>Model S</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Model 3</td>
+        </tr>
+    </tbody>
 </table>
 
 <%def name="link(s)"><a href="https://rtp.trimet.org/rtp/#/nearby/${s.get('lat')},${s.get('lon')}">${s.get('feed_id')} ${s.get('stop_code')}\

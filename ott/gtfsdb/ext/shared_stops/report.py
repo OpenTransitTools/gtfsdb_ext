@@ -1,6 +1,7 @@
 import os
 import inspect
 from mako.template import Template
+from mako.lookup import TemplateLookup
 
 from ..utils import *
 
@@ -13,8 +14,9 @@ this_module_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.curren
 
 def generate_report(ss, tmpl = 'report.mako'):
     stops = sorted(ss['shared'], key=lambda x: x['distance'], reverse=True)
-    loader_tmpl = Template(filename=os.path.join(this_module_dir, 'tmpl', tmpl))
-    report = loader_tmpl.render(stops=stops)
+    lookup = TemplateLookup(directories=[os.path.join(this_module_dir, 'tmpl'), '/srv/geoserver/gtfsdb_ext/ott/gtfsdb/ext/shared_stops/tmpl', '/srv/geoserver/gtfsdb_ext/ott/gtfsdb/ext/shared_stops/tmpl/'])
+    report_tmpl = Template(filename=os.path.join(this_module_dir, 'tmpl', tmpl), lookup=lookup)
+    report = report_tmpl.render(stops=stops)
     print(report)
 
 
