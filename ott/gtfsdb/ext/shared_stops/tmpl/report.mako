@@ -18,6 +18,8 @@
       <th>distance (meters)</th>
       <th>source stop</th>
       <th>shared with</th>
+      <th>shared string</th>
+      <th>filtered</th>
     </tr>
   </thead>
   <tbody>
@@ -54,9 +56,11 @@ ${link(ss)}
       <td>${s.get('desc')}</td>
       <td>${s.get('distance')}</td>
       ${urls(s)}
+      <td>.</td>
+      <td>.</td>
     </tr>
 </%def>
-<%def name="stop_url(stop_id, feed_id)"><a href="" target="#">${stop_id}</a> (${feed_id}) </%def>
+<%def name="stop_url(stop_id, feed_id)"><a href="https://trimet.org/ride/stop.html?stop_id=${stop_id}" target="#">${stop_id}</a> (${feed_id}) </%def>
 
 ${start_html()}
 <h2>Found ${len(stops)} places where ${src_feed_id} shares a stop with other regional agency.</h2>
@@ -67,7 +71,7 @@ ${table_row(s)}\
 %endfor
 ${end_table()}
 <h4>note these ${src_feed_id} stops appear to be inactive (not in the ${src_feed_id}.gtfs.zip): \
-%for k,v in no_stop.items():
+%for k,v in not_active.items():
   ${stop_url(k, v)} \
 %endfor
 </h4>

@@ -3,13 +3,13 @@ from gtfsdb import Database
 from gtfsdb.util import get_csv
 from gtfsdb.scripts import get_args
 
-from . import report
 from .. import query
 from ..utils import *
 
 
 def update_db(shared_stops, db, src_feed_id):
-    for s in shared_stops:
+    for s in shared_stops.get('shared'):
+        break
 
         # step 1: get stop_id we're looking for in given feed_id
         stop_id = s['STOP_ID']
@@ -119,14 +119,27 @@ def make_skips(stop_recs, start=0):
     return skips
 
 
+def make_counts(stop_recs, not_active, start=1):
+    """ utility to build dict of stop_id (repeated) counts """    
+    counts = {}
+    for s in stop_recs:
+        fs = s['STOP_ID']
+        if fs in not_active:
+            continue
+        if counts.get(fs) is None:
+            counts[fs] = start
+        else:
+            counts[fs] = counts[fs] + 1
+    return counts
+
 
 def shared_stops_parser(csvfile, db, src_feed_id):
     unsuppored = {}
-    no_stop = {}
+    not_active = {}
 
     ret_val = {
         'unsuppored': unsuppored,
-        'no_stop': no_stop,
+        'no_stop': not_active,
         'shared': []
     }
 
@@ -150,19 +163,16 @@ def shared_stops_parser(csvfile, db, src_feed_id):
                 ret_val['shared'].append(z)
                 skips[fs] = skips[fs] - 1  # decriment skips, so that we pick up nearer stops on next hits
             else:
-                no_stop[s.get('STOP_ID')] = s['FEED_ID']
+                not_active[s.get('STOP_ID')] = s['FEED_ID']
         else:
             unsuppored[s.get('AGENCY_DESC')] = s.get('AGENCY_DESC')
 
     # step 3a TODO: filter duplicates part A - count the number duplicate FEED:STOP
-    counts = {}
-    for s in stop_recs:
-        fs = mk_feed_stop(s['FEED_ID'], s['STOP_ID'])
-        if counts.get(fs) is None:
-            counts[fs] = 1
-        else:
-            counts[fs] = counts[fs] + 1
     #import pdb; pdb.set_trace()
+    counts = make_counts(stop_recs, not_active)
+    for k,v in counts.items():
+        if v > 1:
+            print(k, v)
 
     return ret_val
 

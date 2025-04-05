@@ -23,7 +23,7 @@ def generate_report(ss, src_feed_id, tmpl = 'report.mako'):
     stops = sorted(ss['shared'], key=lambda x: x.get('distance', 2112.2112), reverse=True)
     lookup = TemplateLookup(directories=[os.path.join(this_module_dir, 'tmpl'), '/srv/geoserver/gtfsdb_ext/ott/gtfsdb/ext/shared_stops/tmpl', '/srv/geoserver/gtfsdb_ext/ott/gtfsdb/ext/shared_stops/tmpl/'])
     report_tmpl = Template(filename=os.path.join(this_module_dir, 'tmpl', tmpl), lookup=lookup)
-    report = report_tmpl.render(src_feed_id=src_feed_id, stops=stops, unsupported=ss.get('unsuppored'), no_stop=ss.get('no_stop'))
+    report = report_tmpl.render(src_feed_id=src_feed_id, stops=stops, unsupported=ss.get('unsuppored'), not_active=ss.get('not_active'))
     return report
 
 
