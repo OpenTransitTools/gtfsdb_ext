@@ -1,7 +1,7 @@
-<%def name="start_html(src_agency='TRIMET')">\
+<%def name="start_html()">\
 <html>
 <head>
-  <title>Shared stops between ${src_agency} and other regional agencies</title>
+  <title>${src_feed_id} shared stops</title>
 </head>
 <body>
 </%def>
@@ -56,20 +56,20 @@ ${link(ss)}
       ${urls(s)}
     </tr>
 </%def>
-<%def name="stop_url(stop_id, feed_id)"><a href="https://trimet.org/ride/stop.html?stop_id=${stop_id}" target="#">${stop_id}</a> (${feed_id}) </%def>
+<%def name="stop_url(stop_id, feed_id)"><a href="" target="#">${stop_id}</a> (${feed_id}) </%def>
 
 ${start_html()}
-<h2>There are ${len(stops)} shared stops that were found.</h2>
+<h2>Found ${len(stops)} places where ${src_feed_id} shares a stop with other regional agency.</h2>
 </br>
 ${start_table()}
 %for s in stops:
 ${table_row(s)}\
 %endfor
 ${end_table()}
-<h4>note these agencies are currently unsupported: ${', '.join(str(v) for v in unsupported.values())}</h4>
-<h4>note these stops appear to be inactive (not in my GTFS): \
+<h4>note these ${src_feed_id} stops appear to be inactive (not in the ${src_feed_id}.gtfs.zip): \
 %for k,v in no_stop.items():
   ${stop_url(k, v)} \
 %endfor
 </h4>
+<h4>note these agencies are currently unsupported: ${', '.join(str(v) for v in unsupported.values())}</h4>
 ${end_html()}
