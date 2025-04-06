@@ -9,7 +9,7 @@ from ..utils import *
 
 def update_db(shared_stops, db, src_feed_id):
     for s in shared_stops.get('shared'):
-        print(s)
+        #print(s)
         break
 
         # step 1: get stop_id we're looking for in given feed_id
@@ -113,7 +113,7 @@ def make_skips(stop_recs, start=0):
     """ utility to build dict that counts the feed/stop pairs """
     skips = {}
     for s in stop_recs:
-        fs = mk_feed_stop(s['FEED_ID'], s['STOP_ID'])
+        fs = mk_feed_stop(s)
         if skips.get(fs) is None:
             skips[fs] = start
         else:
@@ -135,6 +135,11 @@ def make_counts(stop_recs, not_active, start=1):
     return counts
 
 
+def find_stops(stop_recs, feed_id, stop_id, index=0):
+    ret_val = []
+    
+
+
 def shared_stops_parser(csvfile, db, src_feed_id):
     unsuppored = {}
     not_active = {}
@@ -145,7 +150,7 @@ def shared_stops_parser(csvfile, db, src_feed_id):
         'shared': []
     }
 
-    # step 1: grab the csv file, and then query the db and append stop and nearest stop data
+    # step 1: grab the csv file, and then query the db and append stop and nearest stop datak
     stop_recs = build_shared_stops_data(csvfile, db, src_feed_id)
 
     # step 2: make skips (used in step 3) to determine if we have repeat stops, and need a the next nearest stop
@@ -154,12 +159,12 @@ def shared_stops_parser(csvfile, db, src_feed_id):
 
     # step 2: run thru stop data to build up stops list, etc...
     for s in stop_recs:
-        fs = mk_feed_stop(s['FEED_ID'], s['STOP_ID'])
+        #import pdb; pdb.set_trace()
+        fs = mk_feed_stop(s)
         src = s.get('src_stop')
         agy = s.get('agencies')
         if agy:
-            if src:
-                #import pdb; pdb.set_trace()
+            if src:                
                 z = db_rec_to_shared_stop(s, skips[fs])
                 x = query.to_stop_dict(src[0], feed_id="TRIMET", distance=z.get('distance'))
                 z['stops'].insert(0, x)
@@ -168,18 +173,30 @@ def shared_stops_parser(csvfile, db, src_feed_id):
 
                 # mark duplicate stops
                 for zs in z['stops']:
-                    id = mk_feed_stop(zs['feed_id'], zs['stop_id'])
+                    id = mk_feed_stop(zs)
                     if id in duplicates:
                         zs['duplicate'] = True
                         duplicates[id]['duplicate'] = True
-                        s['duplicate'] = True
                     duplicates[id] = zs
             else:
                 not_active[s.get('STOP_ID')] = s['FEED_ID']
         else:
             unsuppored[s.get('AGENCY_DESC')] = s.get('AGENCY_DESC')
 
-    # step 3a TODO: filter duplicates part A - count the number duplicate FEED:STOP
+    # step 3a filter distant and duplicates (part A)
+    for s in ret_val['shared']:
+        if s.get('distance') > 100.0:
+            # if the stops are over 100 meters, filter it (simple)
+            s['filter'] = True
+        elif not s['filter']:
+            if s['stops'][0].get('duplicate'):
+                """ filter duplicate source stops that are over 30 meters from  """
+                t = s['stops'][0]
+                dups = find_stops(ret_val['shared'], t.get('feed_id'), t.get('stop_id'))
+            elif s['stops'][1].get('duplicate'):
+                t = s['stops'][1]
+                dups = find_stops(ret_val['shared'], t.get('feed_id'), t.get('stop_id'), 1)
+
 
 
     return ret_val

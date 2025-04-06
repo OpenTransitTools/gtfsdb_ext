@@ -1,6 +1,6 @@
 ${start_html()}
 <h2>Found ${len(stops)} places where ${src_feed_id} shares a stop with other regional agency.</h2>
-</br>
+<br/>
 ${start_table()}
 %for s in stops:
 ${table_row(s)}\
@@ -14,19 +14,24 @@ ${end_table()}
 <h4>note these agencies are currently unsupported: ${', '.join(str(v) for v in unsupported.values())}</h4>
 ${end_html()}
 
-
 <%def name="start_html()">\
+<%
+import datetime
+now=datetime.datetime.now()
+%>\
+<!DOCTYPE html>
 <html>
 <head>
   <title>${src_feed_id} shared stops</title>
+  <meta content="built ${now}"/>
 </head>
 <body>
 </%def>
 
 
 <%def name="end_html()">\
-</body>
 <%include file="/scripts.mako"/>
+</body>
 </html>
 </%def>
 
@@ -40,7 +45,6 @@ ${end_html()}
       <th>source stop</th>
       <th>shared with</th>
       <th>shared string</th>
-      <th>filtered</th>
     </tr>
   </thead>
   <tbody>
@@ -71,8 +75,7 @@ ${link(s)}${"<B>,</B>&nbsp;" if i+1<len(ss.get('stops')) else ""}\
       <td>${s.get('distance')}</td>
       <td>${link(s.get('stops', [])[0])}</td>
       <td>${urls(s)}</td>
-      <td>.</td>
-      <td>.</td>
+      <td>${s.get('shared_id')}</td>
     </tr>
 </%def>
 
