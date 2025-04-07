@@ -75,7 +75,7 @@ ${link(s)}${"<B>,</B>&nbsp;" if i+1<len(ss.get('stops')) else ""}\
       <td>${s.get('distance')}</td>
       <td>${link(s.get('stops', [])[0])}</td>
       <td>${urls(s)}</td>
-      <td>${s.get('shared_id')}</td>
+      <td>${s.get('filter')} ${s.get('stops', [])[0].get('filter')} ${s.get('stops', [])[1].get('filter')}</td>
     </tr>
 </%def>
 

@@ -178,15 +178,15 @@ def shared_stops_parser(csvfile, db, src_feed_id):
         else:
             unsuppored[s.get('AGENCY_DESC')] = s.get('AGENCY_DESC')
 
-    # step 3a filter distant and duplicates (part A)
+    # step 3 filter distant and duplicate stops (part A)
     for s in ret_val['shared']:
         if s.get('distance') > 100.0:
-            # if the stops are over 100 meters, filter it (simple)
+            # 3a: if a stop is over 100 meters, filter it (simple)
             s['filter'] = True
             s['stops'][0]['filter'] = True
         elif not s['filter']:
+            # 3b: filter duplicate source stops that are over 30 meters from each other 
             if s['stops'][0].get('duplicate') and not s['stops'][0].get('filter'):
-                """ filter duplicate source stops that are over 30 meters from each other """
                 tgt = s['stops'][0]
                 dups = find_stops(ret_val['shared'], tgt, check_filter=True)
                 ld = len(dups)
@@ -197,6 +197,7 @@ def shared_stops_parser(csvfile, db, src_feed_id):
                         if x.get('distance') > max_dist:
                             x['filter'] = True
             elif s['stops'][1].get('duplicate') and not s['stops'][1].get('filter'):
+                # 3c: find the closest duplicate, and filter out the other (further away) stops that matched
                 tgt = s['stops'][1]
                 dups = find_stops(ret_val['shared'], tgt, start_index=1, check_filter=True)
                 ld = len(dups)
@@ -205,8 +206,6 @@ def shared_stops_parser(csvfile, db, src_feed_id):
                     for x in dups:
                         if x != short:
                             x['filter'] = True
-                            pass
-
     return ret_val
 
 
