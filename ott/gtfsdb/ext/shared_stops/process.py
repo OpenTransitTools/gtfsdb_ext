@@ -135,11 +135,6 @@ def make_counts(stop_recs, not_active, start=1):
     return counts
 
 
-def find_stops(stop_recs, feed_id, stop_id, index=0):
-    ret_val = []
-    
-
-
 def shared_stops_parser(csvfile, db, src_feed_id):
     unsuppored = {}
     not_active = {}
@@ -188,16 +183,29 @@ def shared_stops_parser(csvfile, db, src_feed_id):
         if s.get('distance') > 100.0:
             # if the stops are over 100 meters, filter it (simple)
             s['filter'] = True
+            s['stops'][0]['filter'] = True
         elif not s['filter']:
-            if s['stops'][0].get('duplicate'):
-                """ filter duplicate source stops that are over 30 meters from  """
-                t = s['stops'][0]
-                dups = find_stops(ret_val['shared'], t.get('feed_id'), t.get('stop_id'))
-            elif s['stops'][1].get('duplicate'):
-                t = s['stops'][1]
-                dups = find_stops(ret_val['shared'], t.get('feed_id'), t.get('stop_id'), 1)
-
-
+            if s['stops'][0].get('duplicate') and not s['stops'][0].get('filter'):
+                """ filter duplicate source stops that are over 30 meters from each other """
+                tgt = s['stops'][0]
+                dups = find_stops(ret_val['shared'], tgt, check_filter=True)
+                ld = len(dups)
+                if ld > 1:
+                    short = min(dups, key=lambda x: x.get('distance'))
+                    max_dist = short.get('distance') + 30.0
+                    for x in dups:
+                        if x.get('distance') > max_dist:
+                            x['filter'] = True
+            elif s['stops'][1].get('duplicate') and not s['stops'][1].get('filter'):
+                tgt = s['stops'][1]
+                dups = find_stops(ret_val['shared'], tgt, start_index=1, check_filter=True)
+                ld = len(dups)
+                if ld > 1:
+                    short = min(dups, key=lambda x: x.get('distance'))
+                    for x in dups:
+                        if x != short:
+                            x['filter'] = True
+                            pass
 
     return ret_val
 
