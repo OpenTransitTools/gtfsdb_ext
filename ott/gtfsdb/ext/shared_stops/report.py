@@ -6,12 +6,7 @@ from mako.lookup import TemplateLookup
 from .process import cmd_line_get_shared_stops
 from ..utils import *
 
-# NOTE: because this generates a report, turn off all logging so it doesn't bleed into the report output
-import logging
-loggers = [logging.getLogger(name) for name in logging.root.manager.loggerDict]
-for logger in loggers:
-    logger.setLevel(logging.CRITICAL)
-
+reset_logging() # NOTE: turn off all logging so it doesn't bleed into the report output
 this_module_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
 

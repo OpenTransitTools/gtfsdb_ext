@@ -5,11 +5,12 @@ from gtfsdb.scripts import get_args
 from .. import query
 from ..utils import *
 
+reset_logging()
 
 def update_db(shared_stops, db, src_feed_id):
-    print(shared_stops)
+#    print(shared_stops)
     for s in shared_stops.get('shared'):
-        print(s)
+#        print(s)
         continue
 
         # step 1: get stop_id we're looking for in given feed_id
@@ -206,6 +207,18 @@ def shared_stops_parser(csvfile, db, src_feed_id):
                     for x in dups:
                         if x != short:
                             x['filter'] = True
+
+    # 4: set the shared stop elements
+    for s in ret_val['shared']:
+        tgt = s['stops'][0]
+#        print(stop1)
+        if s['filter'] or tgt.get('filter'):
+            continue
+        stopz = [tgt]
+        if tgt.get('duplicate'):
+            dups = find_shareds(ret_val['shared'], tgt)
+            print(dups)
+
     return ret_val
 
 

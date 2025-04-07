@@ -1,3 +1,5 @@
+import logging
+
 NOT_FOUND = "not found"
 INCHES_AWAY = "inches away"
 FEET_AWAY = "feet away"
@@ -5,6 +7,13 @@ YARDS_AWAY = "yards away"
 BLOCKS_AWAY = "blocks away"
 
 IGNORE_AGENCIES = ['CANBY', 'CCRIDER', 'CAT', 'YAMHILL']
+
+
+def reset_logging(level=logging.CRITICAL):
+    """ reset logging of all dependencies -- default to queit pretty much everything """ 
+    loggers = [logging.getLogger(name) for name in logging.root.manager.loggerDict]
+    for logger in loggers:
+        logger.setLevel(level)
 
 
 def get_idz(feed_id, stop_id="", agency_id="?"):
@@ -56,6 +65,24 @@ def find_stops(shared_stops, target, start_index=0, skip_target=False, check_fil
             if check_filter and s.get('filter'):
                 continue
             ret_val.append(s)
+    return ret_val
+
+
+def find_shareds(shared_stops, target):
+    ret_val = []
+    feed_id, stop_id, a = get_idz(target)
+    for ss in shared_stops:
+        s = match_stop(ss['stops'], feed_id, stop_id)
+        if s is None or ss.get('filter'):
+            continue
+        """
+        if s:
+            if skip_target and s == target:
+                continue
+            if s.get('filter'):
+                continue
+        """
+        ret_val.append(ss)
     return ret_val
 
 
