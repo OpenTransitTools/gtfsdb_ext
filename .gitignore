@@ -1,5 +1,6 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
+# git update-index --assume-unchanged
+
 *.py[cod]
 *$py.class
 *.txt
@@ -13,12 +14,12 @@ z.*
 *#
 data/*/
 *.json
-
-# C extensions
 *.so
 
 # Distribution / packaging
-.Python
+__pycache__/
+site-packages
+.Pyth
 build/
 develop-eggs/
 dist/

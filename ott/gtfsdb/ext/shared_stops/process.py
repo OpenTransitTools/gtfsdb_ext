@@ -1,4 +1,3 @@
-
 from gtfsdb import Database
 from gtfsdb.util import get_csv
 from gtfsdb.scripts import get_args
@@ -8,9 +7,10 @@ from ..utils import *
 
 
 def update_db(shared_stops, db, src_feed_id):
+    print(shared_stops)
     for s in shared_stops.get('shared'):
-        #print(s)
-        break
+        print(s)
+        continue
 
         # step 1: get stop_id we're looking for in given feed_id
         stop_id = s['STOP_ID']
@@ -211,6 +211,10 @@ def shared_stops_parser(csvfile, db, src_feed_id):
 
 def cmd_line_get_shared_stops():
     args, kwargs = get_args()
+    if args.schema is None:
+        print("WARNING: you probably need to define '-s <scehma>' on the cmdline for the query agency.  Will default to 'TRIMET'")
+        args.schema = "TRIMET"
+
     db = Database(**kwargs)
     ss = shared_stops_parser(args.file, db, args.schema)
     return args, db, ss

@@ -22,7 +22,7 @@
 ### applications
  - shared-stops report
    - show the multi-agency stop relationships, where multiple agencies (and multiple GTFS feeds) serve the same physical location (as well as probably sharing the same signage)
-   - poetry run shared-stops-report -d postgresql://ott:ott@127.0.0.1:5432/ott ott/gtfsdb/ext/shared_stops/data/shared_stops.csv
+   - poetry run shared-stops-report -s TRIMET -d postgresql://ott:ott@127.0.0.1:5432/ott ott/gtfsdb/ext/shared_stops/data/shared_stops.csv > report.html
 
  - shared-stops populate
    - populate the gtfsdb stops.shared_stops column

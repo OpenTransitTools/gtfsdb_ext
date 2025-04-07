@@ -10,16 +10,13 @@ from ..utils import *
 import logging
 loggers = [logging.getLogger(name) for name in logging.root.manager.loggerDict]
 for logger in loggers:
-    #logger.setLevel(logging.DEBUG)
     logger.setLevel(logging.CRITICAL)
-
 
 this_module_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
 
 def generate_report(ss, src_feed_id, tmpl = 'report.mako'):
     # import pdb; pdb.set_trace()
-    #stops = ss['shared']
     stops = sorted(ss['shared'], key=lambda x: x.get('distance', 2112.2112), reverse=True)
     lookup = TemplateLookup(directories=[os.path.join(this_module_dir, 'tmpl'), '/srv/geoserver/gtfsdb_ext/ott/gtfsdb/ext/shared_stops/tmpl', '/srv/geoserver/gtfsdb_ext/ott/gtfsdb/ext/shared_stops/tmpl/'])
     report_tmpl = Template(filename=os.path.join(this_module_dir, 'tmpl', tmpl), lookup=lookup)

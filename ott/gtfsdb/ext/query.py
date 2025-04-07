@@ -39,6 +39,7 @@ def set_shared_stop(db, shared_stops_val, feed_id, stop_id, table="STOPS"):
 
 
 def find_stop(db, feed_id, stop_id, table="STOPS"):
+    #import pdb; pdb.set_trace()
     sql = "select * from {}.{} where stop_id = '{}'".format(feed_id, table, stop_id)
     return do_sql(db, sql)
 
