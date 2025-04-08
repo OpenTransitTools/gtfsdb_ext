@@ -75,9 +75,17 @@ ${link(s)}${"<B>,</B>&nbsp;" if i+1<len(ss.get('stops')) else ""}\
       <td>${s.get('distance')}</td>
       <td>${link(s.get('stops', [])[0])}</td>
       <td>${urls(s)}</td>
-      <td>${s.get('filter')} ${s.get('stops', [])[0].get('filter')} ${s.get('stops', [])[1].get('filter')}</td>
+      <td>${shared_stop_url(s.get('shared_id'))}</td>
     </tr>
 </%def>
 
 
 <%def name="stop_url(stop_id, feed_id)"><a href="https://trimet.org/ride/stop.html?stop_id=${stop_id}" target="#">${stop_id}</a> (${feed_id}) </%def>
+
+<%def name="shared_stop_url(shared_id)">\
+%if ":" in shared_id:
+%for s in shared_id.split(","):
+<a href="https://rtp.trimet.org/rtp/#/schedule/${s.split(':',1)[1]}" target="#">${s}</a>, \
+%endfor
+%endif
+</%def>

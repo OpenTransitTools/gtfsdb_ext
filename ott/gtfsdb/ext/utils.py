@@ -30,9 +30,18 @@ def mk_feed_stop(feed_id, stop_id=""):
     return "{}:{}".format(feed_id, stop_id)
 
 
-def mk_feed_rec(feed_id, stop_id, agency_id):
+def mk_feed_rec(feed_id, stop_id="", agency_id=""):
     feed_id, stop_id, agency_id = get_idz(feed_id, stop_id, agency_id)
     return "{}:{}:{}".format(agency_id, feed_id, stop_id)
+
+
+def mk_shared_id(stops, min_stops=2, def_val=""):
+    ret_val = def_val
+    if len(stops) >= min_stops:
+        for i, s in enumerate(stops):
+            id = mk_feed_rec(s)
+            ret_val = "{}{}{}".format(ret_val, "" if i==0 else ",", id)
+    return ret_val
 
 
 def cmp_stop(stop, feed_id, stop_id, agency_id=None):
@@ -50,6 +59,18 @@ def match_stop(stops, feed_id, stop_id, agency_id=None, start_index=0):
         if cmp_stop(s, feed_id, stop_id, agency_id):
             ret_val = s
             break
+    return ret_val
+
+
+def get_active_stops(stops, start_index=0):
+    """ loop thru list of stops, returning an array of those not filtered """
+    ret_val = []
+    for i, s in enumerate(stops):
+        if i < start_index:
+            continue
+        if s.get('filter'):
+            continue
+        ret_val.append(s)
     return ret_val
 
 

@@ -209,16 +209,34 @@ def shared_stops_parser(csvfile, db, src_feed_id):
                             x['filter'] = True
 
     # 4: set the shared stop elements
+    seen = {}
     for s in ret_val['shared']:
         tgt = s['stops'][0]
-#        print(stop1)
-        if s['filter'] or tgt.get('filter'):
+        tid = mk_feed_stop(tgt)
+
+        # step a: make sure we have not seen this stop, and it's not filtered
+        if s['filter'] or tgt.get('filter'): # or seen.get(tid):
             continue
+
+        # step b: find all the stops for this target
         stopz = [tgt]
         if tgt.get('duplicate'):
             dups = find_shareds(ret_val['shared'], tgt)
-            print(dups)
+            for d in dups:
+                acts = get_active_stops(d['stops'], start_index=1)
+                stopz.extend(acts)
+            if len(stopz) > 1:
+                seen[tid] = tid
+        else:
+            acts = get_active_stops(s['stops'], start_index=1)
+            if len(acts) >= 1:
+                seen[tid] = tid
+                stopz.extend(acts)
 
+        # step c: make the <agency>:<feed>:<stop>,<agenc... string and assign to stops
+        id = mk_shared_id(stopz)
+        s['shared_id'] = id
+ 
     return ret_val
 
 
