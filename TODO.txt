@@ -1,0 +1,11 @@
+Apr 2025:
+=========
+ - run TRANS .csv export weekly / nightly
+ - improve geo db build process:
+    - get shared_stops into the export process, rather than post loading on remote servers
+    - put the current processing here in gtfsdb_ext rather than in geo
+    - ...
+ - generate CHANGELOG via poetry (how?)
+ - add bbox to route and pattern tables
+ 
+
