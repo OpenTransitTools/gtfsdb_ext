@@ -85,7 +85,7 @@ ${link(s)}${"<B>,</B>&nbsp;" if i+1<len(ss.get('stops')) else ""}\
 <%def name="shared_stop_url(shared_id)">\
 %if ":" in shared_id:
 %for s in shared_id.split(","):
-<a href="https://rtp.trimet.org/rtp/#/schedule/${s.split(':',1)[1]}" target="#">${s}</a>, \
+<a href="https://rtp.trimet.org/rtp/#/schedule/${s.split(':',1)[1]}" target="#${shared_id}">${s}</a>, \
 %endfor
 %endif
 </%def>

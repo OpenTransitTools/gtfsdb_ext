@@ -5,25 +5,7 @@ from gtfsdb.scripts import get_args
 from .. import query
 from ..utils import *
 
-reset_logging()
-
-def update_db(shared_stops, db, src_feed_id):
-#    print(shared_stops)
-    for s in shared_stops.get('shared'):
-#        print(s)
-        continue
-
-        # step 1: get stop_id we're looking for in given feed_id
-        stop_id = s['STOP_ID']
-        feed_id = s['FEED_ID']
-
-        stop = query.find_stop(db, src_feed_id, stop_id)
-        if stop:
-            print(stop)
-            query.set_shared_stop(db, "X {} X".format(stop_id), src_feed_id, stop_id)
-            query.set_shared_stop(db, "X {} X".format(stop_id), src_feed_id, stop_id, "CURRENT_STOPS")
-        else:
-            print("{}.{} not found in the feed.".format(src_feed_id, stop_id))
+#reset_logging()
 
 
 def build_shared_stops_data(stops_csv_file, db, src_feed_id):
@@ -240,6 +222,17 @@ def shared_stops_parser(csvfile, db, src_feed_id):
     return ret_val
 
 
+def update_db(shared_stops, db):
+    for ss in shared_stops.get('shared'):
+        if ss.get('shared_id'):
+            for s in ss.get('stops'):
+                feed_id, stop_id, a = get_idz(s)
+                stop = query.find_stop(db, feed_id, stop_id)
+                if stop:
+                    query.set_shared_stop(db, ss.get('shared_id'), feed_id, stop_id)
+                    query.set_shared_stop(db, ss.get('shared_id'), feed_id, stop_id, "CURRENT_STOPS")
+
+
 def cmd_line_get_shared_stops():
     args, kwargs = get_args()
     if args.schema is None:
@@ -253,4 +246,4 @@ def cmd_line_get_shared_stops():
 
 def update_shared_stops():
     args, db, ss = cmd_line_get_shared_stops()
-    update_db(ss, db, args.schema)
+    update_db(ss, db)
