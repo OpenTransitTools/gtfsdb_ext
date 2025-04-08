@@ -19,7 +19,19 @@ def generate_report(ss, src_feed_id, tmpl = 'report.mako'):
     return report
 
 
+def echo_shared_stops():
+    args, db, ss = cmd_line_get_shared_stops()
+    print(args)
+    print()
+    print(ss.get('unsupported'))
+    print(ss.get('not_active'))
+    print()
+    for s in ss.get('shared'):
+        print(s)
+
+
 def create_report():
     args, db, ss = cmd_line_get_shared_stops()
     report = generate_report(ss, args.schema)
     print(report)
+

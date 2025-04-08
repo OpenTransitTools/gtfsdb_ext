@@ -29,4 +29,6 @@ gtfsdb-load = "gtfsdb.scripts:gtfsdb_load"
 gtfsdb-current-load = "gtfsdb.scripts:current_tables_cmdline"
 
 update-shared-stops = "ott.gtfsdb.ext.shared_stops.process:update_shared_stops"
+echo-shared-stops   = "ott.gtfsdb.ext.shared_stops.report:echo_shared_stops"
 shared-stops-report = "ott.gtfsdb.ext.shared_stops.report:create_report"
+
