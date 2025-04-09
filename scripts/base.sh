@@ -19,13 +19,14 @@ function feed_name_from_zip() {
 
 mac_psql=/Applications/Postgres.app/Contents/Versions/9.4/bin/psql
 unix_psql=`which psql`
+pg_restore=pg_restore
 
 if [ -f "$mac_psql" ]
 then
-    psql=$mac_psql
+  psql=$mac_psql
 elif [ -f "$unix_psql" ]
 then
-    psql=$unix_psql
+  psql=$unix_psql
 fi
 
 db_url=$1
