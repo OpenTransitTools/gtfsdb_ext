@@ -13,11 +13,16 @@ fi
 for f in ${GTFS_DIR}/*gtfs.zip
 do
   name=$(feed_name_from_zip $f)  
+  if [ ${2:-""} == "f" ]; then
+    if [ ${name} == "trimet" ] || [ ${name} == "ctran" ]; then
+      continue;
+    fi
+  fi
 
   cmd="$gtfs_load -c -ct -g -d $otp_url -s ${name} ${f}"
   echo $cmd
   if [ ${1:-""} == "load" ]; then
-      echo loading...
-      eval $cmd
+    echo loading...
+    eval $cmd
   fi
 done
