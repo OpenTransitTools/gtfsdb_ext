@@ -3,7 +3,8 @@
 ## *note*: requires the ott db to exist 
 ##
 LDDIR=`dirname $0`
-. $LDDIR/base.sh
+. $LDDIR/../base.sh
+
 
 gtfs_load="poetry run gtfsdb-load"
 if [ -f "bin/gtfsdb-load" ]; then

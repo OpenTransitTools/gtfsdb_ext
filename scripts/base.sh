@@ -18,7 +18,7 @@ function feed_name_from_zip() {
 }
 
 mac_psql=/Applications/Postgres.app/Contents/Versions/9.4/bin/psql
-unix_psql=`which psql`
+unix_psql=`which psql 2> /dev/null`
 pg_restore=pg_restore
 
 if [ -f "$mac_psql" ]
