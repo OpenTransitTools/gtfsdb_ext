@@ -3,7 +3,7 @@
 ## *note*: requires the ott db to exist 
 ##
 LDDIR=`dirname $0`
-. $LDDIR/../base.sh
+. $LDDIR/base.sh
 . $LDDIR/shapes.sh
 . $LDDIR/schemas.sh
 
@@ -23,7 +23,7 @@ if [ -f $chk ]; then
   # grab and load the shape .sql files
   get_shps
   load_shps
-
+exit
   cd ~/gtfsdb_ext;
 
   # load gtfs feeds into gtfsdb

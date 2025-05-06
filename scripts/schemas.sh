@@ -1,5 +1,5 @@
 SCDIR=`dirname $0`
-. $SCDIR/../base.sh
+. $SCDIR/base.sh
 
 
 # CREATE A <name>.schema file in the $GTFS_DIR, along with some other permission cmds
@@ -22,7 +22,7 @@ function load_schemas() {
   for s in ${GTFS_DIR}/*schema
   do
     echo "load schema(s): $s"
-    r="${LDDIR}/file.sh $s"
+    r="${SCDIR}/file.sh $s"
     echo $r
     eval $r
     echo

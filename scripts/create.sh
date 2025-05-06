@@ -4,12 +4,13 @@
 DIR=`dirname $0`
 . $DIR/base.sh
 
-## create user (default is user='ott' with pass='ott' -- change in ./base.sh)
-$psql -d ${db_url}${def_db} -c "CREATE USER ${user} WITH PASSWORD '${pass}';"
+## create user and db (default is user='ott', pass='ott' and db='ott' -- see./base.sh)
+uu="$psql -d ${def_user} -c \"CREATE USER ${user} WITH PASSWORD '${pass}';\""
+dd="$psql -d ${def_user} -c \"CREATE DATABASE ${db} WITH OWNER ${user};\""
+ext="$psql -d ${db} -c \"CREATE EXTENSION postgis;\""
 
-# create ott and osm DBs
-for d in $db
+for x in "$uu" "$dd" "$ext"
 do
-  $psql -d ${db_url}${def_db} -c "CREATE DATABASE ${d} WITH OWNER ${user};"
-  $psql -d ${db_url}${d} -c "CREATE EXTENSION postgis;"
+  echo $x
+  eval $x
 done

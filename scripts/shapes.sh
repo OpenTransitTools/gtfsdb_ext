@@ -1,5 +1,5 @@
-SHDIR=`dirname $0`
-. $SHDIR/../base.sh
+SHPDIR=`dirname $0`
+. $SHPDIR/base.sh
 
 SHPS="rail.sql" 
 
@@ -17,7 +17,7 @@ function get_shps() {
 function load_shps() {
   for f in $SHPS
   do
-    cmd="$SHDIR/../db/file.sh $GTFS_DIR/$f"
+    cmd="$SHPDIR/file.sh $GTFS_DIR/$f"
     echo "shp load: $cmd"
     eval $cmd
   done

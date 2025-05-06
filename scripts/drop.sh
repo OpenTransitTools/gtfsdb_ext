@@ -4,5 +4,8 @@
 DIR=`dirname $0`
 . $DIR/base.sh
 
-$psql -d ${db_url}${def_db} -c "DROP DATABASE ${db};"
-$psql -d ${db_url}${def_db} -c "DROP USER ${user};"
+dropdb="$psql -d ${def_user} -c \"DROP DATABASE ${db};\""
+echo $dropdb
+eval $dropdb
+
+$psql -d ${def_user} -c "DROP USER ${user};"
