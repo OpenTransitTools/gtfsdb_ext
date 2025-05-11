@@ -1,15 +1,10 @@
-Apr 2025:
+May 2025:
 =========
-  - improve geo db build process:
-    - get shared_stops into the export process, rather than post loading on remote servers
-    - put the current processing here in gtfsdb_ext rather than in geo
-    - fix and run "current" data updates on stag/prod servers
-    - ...
+ - fix and run "current" data updates on stag/prod servers
  - run TRANS .csv export weekly / nightly
  - tmux is still used for geo's docker junk ... move to what we're doing with OMT to run in background
  - generate CHANGELOG via poetry (how?)
  - add bbox to route and pattern tables
-
 
  QUESTIONS:
  ==========
