@@ -1,12 +1,17 @@
-##
-## load gtfsdb spatial db for OTT
-## *note*: requires the ott db to exist 
-##
-LDDIR=`dirname $0`
-. $LDDIR/base.sh
+do_load=${1:-"just_echo"}
+db_svr=${2:-"localhost"}
+db_port=${3:-"5432"}
 
+GDIR=`dirname $0`
+. $GDIR/base.sh
 
 gtfs_load="poetry run gtfsdb-load"
+install_load=`which gtfsdb-load`
+if [ $install_load ]; then
+  echo "Will use the installed '$install_load' rather than running via poetry."
+  gtfs_load=$install_load
+fi
+
 if [ -f "bin/gtfsdb-load" ]; then
   gtfs_load="bin/gtfsdb-load"
 fi    
@@ -22,8 +27,7 @@ do
 
   cmd="$gtfs_load -c -ct -g -d $ott_url -s ${name} ${f}"
   echo $cmd
-  if [ ${1:-""} == "load" ]; then
-    echo loading...
+  if [ "$do_load" == "load" ]; then
     eval $cmd
   fi
 done

@@ -11,12 +11,15 @@ fi
 mac_psql=/Applications/Postgres.app/Contents/Versions/9.4/bin/psql
 unix_psql=`which psql 2> /dev/null`
 
+db_svr=${db_svr:-"localhost"}
+db_port=${db_port:-5432}
+
 user=${PG_USER:-ott}
 pass=${PG_PASS:-ott}
 db=${PG_DB:-ott}
 def_user=${PG_DEF:-postgres}
-dckr_url=${PG_URL:-postgresql://docker:docker@localhost:5432}
-ott_url=${OTT_URL:-postgresql://$user:$pass@127.0.0.1:5432/$db}
+dckr_url=${PG_URL:-postgresql://docker:docker@${db_svr}:${db_port}}
+ott_url=${OTT_URL:-postgresql://${user}:${pass}@${db_svr}:${db_port}/$db}
 
 if [ -f "$mac_psql" ]; then
   psql=$mac_psql
