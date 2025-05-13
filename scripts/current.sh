@@ -22,3 +22,6 @@ do
   echo $cmd
   eval $cmd
 done
+
+echo "!!!! TODO: remove geoserver cache !!!!"
+echo "???? TODO - what other cache / junk needs to be purged weekly on the current update ????"
