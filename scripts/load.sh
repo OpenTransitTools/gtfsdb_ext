@@ -9,6 +9,7 @@ LDDIR=`dirname $0`
 . $LDDIR/views.sh
 
 required_feed=${1:-TRIMET}
+ext_data_dir="$LDDIR/../data/${required_feed,,}"
 
 chk=${GTFS_DIR}/${required_feed}.gtfs.zip
 if [ -f $chk ]; then
@@ -49,7 +50,7 @@ if [ -f $chk ]; then
   echo "step 5: run the shared stops population (run from gtfsdb_ext/ home dir)"
   echo "***********************************************************************"
   cd $LDDIR/../
-  cmd="poetry run update-shared-stops -s ${required_feed} -d $ott_url ott/gtfsdb/ext/shared_stops/data/shared_stops.csv"
+  cmd="poetry run update-shared-stops -s ${required_feed} -d $ott_url ${ext_data_dir}/shared_stops.csv"
   echo $cmd
   eval $cmd
   cd -
@@ -69,7 +70,7 @@ if [ -f $chk ]; then
   echo "step 7: create the 'current' views, etc..."
   echo "  NOTE: we need views to run after shared-stops, as we then exclude shared stops"
   echo "**********************************************************"
-  make_views
+  copy_views ${GTFS_DIR} ${ext_data_dir}
   load_views  
   echo;  echo;
 else

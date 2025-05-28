@@ -1,6 +1,6 @@
 [[package]]
 name = "certifi"
-version = "2025.1.31"
+version = "2025.4.26"
 description = "Python package for providing Mozilla's CA Bundle."
 category = "main"
 optional = false
@@ -74,7 +74,7 @@ sqlalchemy = "1.4.49"
 type = "git"
 url = "https://github.com/OpenTransitTools/gtfsdb.git"
 reference = "rtp"
-resolved_reference = "0172827caf0eeca40e0e769fcb017f5263f8066c"
+resolved_reference = "e895c2a2b5f99ed086d7062ee35458d919656266"
 
 [[package]]
 name = "idna"
@@ -283,8 +283,8 @@ content-hash = "eb8998da00bb2139e6e33d61c02cdd8f489d4166d035b5d2d9168829ef2c24f5
 
 [metadata.files]
 certifi = [
-    {file = "certifi-2025.1.31-py3-none-any.whl", hash = "sha256:ca78db4565a652026a4db2bcdf68f2fb589ea80d0be70e03929ed730746b84fe"},
-    {file = "certifi-2025.1.31.tar.gz", hash = "sha256:3d5da6925056f6f18f119200434a4780a94263f10d1c21d032a6f6b2baa20651"},
+    {file = "certifi-2025.4.26-py3-none-any.whl", hash = "sha256:30350364dfe371162649852c63336a15c70c6510c2ad5015b21c2345311805f3"},
+    {file = "certifi-2025.4.26.tar.gz", hash = "sha256:0a816057ea3cdefcef70270d2c515e4506bbc954f417fa5ade2021213bb8f0c6"},
 ]
 charset-normalizer = [
     {file = "charset-normalizer-2.0.12.tar.gz", hash = "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597"},
