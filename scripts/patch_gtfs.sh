@@ -14,16 +14,18 @@ function patch() {
   echo $PWD
   curl $url > $file
   local size=`ls -ltr $file | awk -F" " '{ print $5 }'`
-  if [ $size -lt $exp_size ] && [ -f "$bkup" ]; then
-    echo
-    echo "WARN: $url download of $file is only $size bytes in size ... patching $zip with $bkup"
-    echo
-    cp $bkup $file
-  else
-    echo
-    echo "ERROR: $url download of $file is only $size bytes in size ... not patching $zip"
-    echo
-    rm $file
+  if [ $size -lt $exp_size ]; then
+    if [ -f "$bkup" ]; then
+      echo
+      echo "WARN: $url download of $file is only $size bytes in size ... patching $zip with $bkup"
+      echo
+      cp $bkup $file
+    else
+      echo
+      echo "ERROR: $url download of $file is only $size bytes in size ... not patching $zip"
+      echo
+      rm $file
+    fi
   fi
 
   if [ -f "$file" ] && [ -f "$zip" ]; then
