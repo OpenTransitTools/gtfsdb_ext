@@ -11,8 +11,7 @@ def to_csv(stops, feed_id, output):
     #  "{""stop_code"":""2"",""stop_description"":""Stop in LO"",""url"":""https://agency.org/stop/2"",""location_type"":""1"",""direction"":""East"",""position"":""Nearside""}"    
 
     def to_addendum_json(stop, feed_id):
-        #return "{""stop_code"":""{}""
-        #return """stop_code\"\":\"\"{}\"\"".format(stop.get_stop_code())
+        si = '"stop_id":"{}",'.format(stop.stop_id) if stop.stop_id else ""
         sc = '"stop_code":"{}",'.format(stop.get_stop_code()) if stop.get_stop_code() else ""
         sd = '"stop_description":"{}",'.format(stop.stop.stop_desc) if stop.stop.stop_desc else ""
         lt = '"location_type":{},'.format(stop.stop.location_type or "0")
@@ -23,9 +22,9 @@ def to_csv(stops, feed_id, output):
         p  = '"position":"{}",'.format(stop.stop.position) if stop.stop.position else ""
         s  = '"shared":"{}",'.format(stop.stop.shared_stops) if stop.stop.shared_stops else ""
         m  = '"mode":"{}"'.format(stop.route_mode or "BUS")
-        return '{{{}{}{}{}{}{}{}{}{}{}}}'.format(f, a, sc, sd, lt, u, d, p, s, m)
+        return '{{{}{}{}{}{}{}{}{}{}{}{}}}'.format(f, a, si, sc, sd, lt, u, d, p, s, m)
 
-    layer = feed_id + "_stops"
+    layer = feed_id + ":stops"
     source = "transit"
     n = {"id":"", "name":"", "lat":0.0, "lon":0.0, "source": source, "layer": layer, "addendum_json_gtfs": ""}
 
@@ -40,7 +39,7 @@ def to_csv(stops, feed_id, output):
         writer.writerow(n)
 
 
-def query(feed, output, url="postgresql://ott@localhost:5432/ott"):
+def query(feed, output, url="postgresql://ott:ott@localhost:5432/ott"):
     db = Database(url=url, schema=feed.lower())
     stops = CurrentStops.query_stops(db.session())
     to_csv(stops, feed, output)
@@ -48,7 +47,7 @@ def query(feed, output, url="postgresql://ott@localhost:5432/ott"):
 
 def main():
     #import pdb; pdb.set_trace()
-    args, kwargs = get_args(def_db="postgresql://ott@localhost:5432/ott", def_schema='SMART')
+    args, kwargs = get_args(def_db="postgresql://ott:ott@localhost:5432/ott", def_schema='SMART')
     if len(args.file) < 4:
         import io
         output = io.StringIO()
