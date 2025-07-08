@@ -6,9 +6,11 @@ from gtfsdb import util
 
 
 def to_csv(stops, feed_id, output):
-    # id,name,lat,lon,source,layer,addendum_json_gtfs
-    # TRIMET:22,A Ave & Chandler (TriMet Stop ID 2),45.420609,-122.675671,transit,TRIMET_stops,
+    # id,name,lat,lon,source,layer,name_json,addendum_json_gtfs
+    # TRIMET:2,A Ave & Chandler (TriMet Stop ID 2),45.420609,-122.675671,transit,TRIMET_stops,"[""2"", ""2"",""TriMet 2""]",
     #  "{""stop_code"":""2"",""stop_description"":""Stop in LO"",""url"":""https://agency.org/stop/2"",""location_type"":""1"",""direction"":""East"",""position"":""Nearside""}"    
+    def to_alias_json(stop):
+        return '["{}","{}"]'.format(stop.stop_id, stop.get_stop_code())
 
     def to_addendum_json(stop, feed_id):
         si = '"stop_id":"{}",'.format(stop.stop_id) if stop.stop_id else ""
@@ -26,15 +28,16 @@ def to_csv(stops, feed_id, output):
 
     layer = feed_id + ":stops"
     source = "transit"
-    n = {"id":"", "name":"", "lat":0.0, "lon":0.0, "source": source, "layer": layer, "addendum_json_gtfs": ""}
+    n = {"id":"", "name":"", "lat":0.0, "lon":0.0, "source": source, "layer": layer, "name_json": "", "addendum_json_gtfs": ""}
 
     writer = csv.DictWriter(output, fieldnames=n.keys())
     writer.writeheader()
     for s in stops:
         n['id'] = "{}:{}".format(feed_id, s.stop_id)
-        n['name'] = "{} ({} Stop ID {})".format(s.stop_name, s.stop.agency_name, s.get_stop_code())
+        n['name'] = "{} ({} Stop ID {})".format(s.stop_name, s.stop.agency_name or "", s.get_stop_code())
         n['lat'] = s.stop_lat
         n['lon'] = s.stop_lon
+        n['name_json'] = to_alias_json(s)
         n['addendum_json_gtfs'] = to_addendum_json(s, feed_id)
         writer.writerow(n)
 
