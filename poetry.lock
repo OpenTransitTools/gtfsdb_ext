@@ -74,7 +74,7 @@ sqlalchemy = "1.4.49"
 type = "git"
 url = "https://github.com/OpenTransitTools/gtfsdb.git"
 reference = "rtp"
-resolved_reference = "e895c2a2b5f99ed086d7062ee35458d919656266"
+resolved_reference = "1251bba97ea93ede8b1f2a13f87b6f469b0ab938"
 
 [[package]]
 name = "idna"

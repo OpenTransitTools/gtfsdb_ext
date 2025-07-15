@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 # git update-index --assume-unchanged
 *.out
+*_*.csv
 *.py[cod]
 *$py.class
 *.txt
