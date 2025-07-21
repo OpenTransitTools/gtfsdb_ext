@@ -33,4 +33,3 @@ echo-shared-stops   = "ott.gtfsdb.ext.shared_stops.report:echo_shared_stops"
 shared-stops-report = "ott.gtfsdb.ext.shared_stops.report:create_report"
 
 pelias-stops = "ott.gtfsdb.ext.pelias.export.stops:main"
-
