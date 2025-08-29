@@ -233,8 +233,8 @@ def update_db(shared_stops, db):
                     query.set_shared_stop(db, ss.get('shared_id'), feed_id, stop_id, "CURRENT_STOPS")
 
 
-def cmd_line_get_shared_stops():
-    args, kwargs = get_args()
+def cmd_line_get_shared_stops(prog_name):
+    args, kwargs = get_args(prog_name=prog_name)
     if args.schema is None:
         print("WARNING: you probably need to define '-s <scehma>' on the cmdline for the query agency.  Will default to 'TRIMET'")
         args.schema = "TRIMET"

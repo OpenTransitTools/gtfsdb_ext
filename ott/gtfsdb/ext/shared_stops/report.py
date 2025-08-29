@@ -20,7 +20,7 @@ def generate_report(ss, src_feed_id, tmpl = 'report.mako'):
 
 
 def echo_shared_stops():
-    args, db, ss = cmd_line_get_shared_stops()
+    args, db, ss = cmd_line_get_shared_stops('echo-shared-stops')
     print(args)
     print()
     print(ss.get('unsupported'))
@@ -31,7 +31,7 @@ def echo_shared_stops():
 
 
 def create_report():
-    args, db, ss = cmd_line_get_shared_stops()
+    args, db, ss = cmd_line_get_shared_stops('shared-stops-report')
     report = generate_report(ss, args.schema)
     print(report)
 
