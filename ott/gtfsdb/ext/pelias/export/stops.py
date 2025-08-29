@@ -60,8 +60,8 @@ def query(feed, output, url="postgresql://ott:ott@localhost:5432/ott"):
 
 def main():
     #import pdb; pdb.set_trace()
-    args, kwargs = get_args(def_db="postgresql://ott:ott@localhost:5432/ott", def_schema='SMART')
-    if len(args.file) < 4:
+    args, kwargs = get_args(prog_name='pelias-stops', def_db="postgresql://ott:ott@localhost:5432/ott", def_schema='SMART')
+    if args.file.lower() in ("p", "print"):
         import io
         output = io.StringIO()
         query(args.feed_id, output, args.database_url)
@@ -69,3 +69,4 @@ def main():
     else:
         with open(args.file, 'w') as output:
             query(args.feed_id, output, args.database_url)
+            
