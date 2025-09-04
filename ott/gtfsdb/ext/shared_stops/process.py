@@ -25,8 +25,8 @@ def build_shared_stops_data(stops_csv_file, db, src_feed_id):
         s['nearest'] = []
 
         # step 1: get stop_id we're looking for in given feed_id
-        feed_id = s['FEED_ID']
-        stop_id = s['STOP_ID']
+        feed_id = s['feed_id']
+        stop_id = s['stop_id']
 
         # step 2: make sure we have an agency for this feed (else might be a non-supported feed)
         agencies = query.agencies(db, feed_id)
@@ -50,10 +50,10 @@ def build_shared_stops_data(stops_csv_file, db, src_feed_id):
 
 def db_rec_to_shared_stop(rec, skip=0):
     # step 1: parse the elements from shared_stops.csv    
-    id=rec.get('STOP_ID')
-    desc=rec.get('AGENCY_DESC')
-    aid=rec.get('AGENCY')
-    feed=rec.get('FEED_ID')
+    id=rec.get('stop_id')
+    desc=rec.get('agency_name')
+    aid=rec.get('agency_id')
+    feed=rec.get('feed_id')
 
     # step 2: find all the agencies for a given feed
     age=rec.get('agencies')
@@ -108,7 +108,7 @@ def make_counts(stop_recs, not_active, start=1):
     """ utility to build dict of stop_id (repeated) counts """    
     counts = {}
     for s in stop_recs:
-        fs = s['STOP_ID']
+        fs = s['stop_id']
         if fs in not_active:
             continue
         if counts.get(fs) is None:
@@ -119,11 +119,11 @@ def make_counts(stop_recs, not_active, start=1):
 
 
 def shared_stops_parser(csvfile, db, src_feed_id):
-    unsuppored = {}
+    unsupported = {}
     not_active = {}
 
     ret_val = {
-        'unsuppored': unsuppored,
+        'unsupported': unsupported,
         'not_active': not_active,
         'shared': []
     }
@@ -147,7 +147,7 @@ def shared_stops_parser(csvfile, db, src_feed_id):
                 x = query.to_stop_dict(src[0], feed_id="TRIMET", distance=z.get('distance'))
                 z['stops'].insert(0, x)
                 ret_val['shared'].append(z)
-                skips[fs] = skips[fs] - 1  # decriment skips, so that we pick up nearer stops on next hits
+                skips[fs] = skips[fs] - 1  # dec skips, so that we pick up nearer stops on next hits
 
                 # mark duplicate stops
                 for zs in z['stops']:
@@ -157,9 +157,9 @@ def shared_stops_parser(csvfile, db, src_feed_id):
                         duplicates[id]['duplicate'] = True
                     duplicates[id] = zs
             else:
-                not_active[s.get('STOP_ID')] = s['FEED_ID']
+                not_active[s.get('stop_id')] = s['feed_id']
         else:
-            unsuppored[s.get('AGENCY_DESC')] = s.get('AGENCY_DESC')
+            unsupported[s.get('agency_name')] = s.get('agency_name')
 
     # step 3 filter distant and duplicate stops (part A)
     for s in ret_val['shared']:
