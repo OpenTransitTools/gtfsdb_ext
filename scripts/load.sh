@@ -2,14 +2,14 @@
 ## load gtfsdb spatial db for OTT
 ## *note*: requires the ott db to exist 
 ##
-LDDIR=`dirname $0`
-. $LDDIR/base.sh
-. $LDDIR/shapes.sh
-. $LDDIR/schemas.sh
-. $LDDIR/views.sh
+LOADDIR=`dirname $0`
+. $LOADDIR/base.sh
+. $LOADDIR/shapes.sh
+. $LOADDIR/schemas.sh
+. $LOADDIR/views.sh
 
 required_feed=${1:-TRIMET}
-ext_data_dir="$LDDIR/../data/${required_feed,,}"
+ext_data_dir="${LOADDIR}/../data/${required_feed,,}"
 
 chk=${GTFS_DIR}/${required_feed}.gtfs.zip
 if [ -f $chk ]; then
@@ -21,7 +21,7 @@ if [ -f $chk ]; then
 
   echo "step 1: patch CTRAN_FLEX, etc..."
   echo "********************************"
-  $LDDIR/patch_gtfs.sh
+  $LOADDIR/patch_gtfs.sh
 
   echo "step 2: create 'current' schema (in addition to gtfs agency schemas)"
   echo "********************************************************************"
@@ -35,11 +35,15 @@ if [ -f $chk ]; then
 
   echo "step 4: load gtfs feeds into gtfsdb (run from gtfsdb_ext/ home dir)"
   echo "*******************************************************************"
-  cd $LDDIR/../
+  cd $LOADDIR/../
   for f in ${GTFS_DIR}/*gtfs.zip
   do
     name=$(feed_name_from_zip $f)
-    cmd="poetry run gtfsdb-load -c -ct -g -d $ott_url -s ${name} ${f}"
+    CURRENT_FLAG="-cta"
+    if [ ${name} == "trimet" ] || [ ${name} == "other-agency-here" ]; then
+      CURRENT_FLAG="-ct"  # actually use date to calculate current views
+    fi
+    cmd="poetry run gtfsdb-load -c $CURR_FLAG -g -d $ott_url -s ${name} ${f}"
     echo "  $cmd"
     eval $cmd
     sleep 1
@@ -49,7 +53,7 @@ if [ -f $chk ]; then
 
   echo "step 5: run the shared stops population (run from gtfsdb_ext/ home dir)"
   echo "***********************************************************************"
-  cd $LDDIR/../
+  cd $LOADDIR/../
   cmd="poetry run update-shared-stops -s ${required_feed} -d $ott_url ${ext_data_dir}/shared_stops.csv"
   echo $cmd
   eval $cmd
