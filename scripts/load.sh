@@ -43,7 +43,7 @@ if [ -f $chk ]; then
     if [ ${name} == "trimet" ] || [ ${name} == "other-agency-here" ]; then
       CURRENT_FLAG="-ct"  # actually use date to calculate current views
     fi
-    cmd="poetry run gtfsdb-load -c $CURR_FLAG -g -d $ott_url -s ${name} ${f}"
+    cmd="poetry run gtfsdb-load -c ${CURRENT_FLAG} -g -d $ott_url -s ${name} ${f}"
     echo "  $cmd"
     eval $cmd
     sleep 1
@@ -54,7 +54,15 @@ if [ -f $chk ]; then
   echo "step 5: run the shared stops population (run from gtfsdb_ext/ home dir)"
   echo "***********************************************************************"
   cd $LOADDIR/../
-  cmd="poetry run update-shared-stops -s ${required_feed} -d $ott_url ${ext_data_dir}/shared_stops.csv"
+
+  echo " step 5a: curl the shared stops"
+  CSV=ss.csv
+  rm -f $CSV
+  curl "https://developer.trimet.org/ws/v3/sharedStops?csv=true&appid=8CBD14D520C6026CC7EEE56A9" > $CSV
+  echo
+
+  echo " step 5b: load / update shared stops"
+  cmd="poetry run update-shared-stops -s ${required_feed} -d $ott_url $CSV"
   echo $cmd
   eval $cmd
   cd -
