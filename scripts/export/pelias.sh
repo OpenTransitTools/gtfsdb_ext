@@ -9,7 +9,7 @@ for z in ~/gtfs/*zip
 do 
   f=${z##*/}
   f=${f%.gtfs.zip}
-  #poetry run pelias-stops -s ${f} "${f}_stops.csv"
+  poetry run pelias-stops -s ${f} "${f}_stops.csv"
 done
 
 # move to pelias etl server
