@@ -5,7 +5,7 @@
 *.py[cod]
 *$py.class
 *.txt
-ss.csv
+*.csv
 x
 y
 z

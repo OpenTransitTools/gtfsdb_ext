@@ -14,6 +14,12 @@ def make_pelias_csv_record(id="", name="", lat=0.0, lon=0.0, source="", layer=""
     return ret_val
 
 
+def set_name_lat_lon(rec, name="", lat=0.0, lon=0.0):
+    rec['name'] = name
+    rec['lat'] = lat
+    rec['lon'] = lon
+
+
 def to_alias_json(*names):
     """
     return a string that looks like ["alias X","alias Y","alias Z"] 
