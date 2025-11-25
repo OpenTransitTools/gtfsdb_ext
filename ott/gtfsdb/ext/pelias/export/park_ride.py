@@ -36,7 +36,8 @@ def to_csv(json, output):
         name = r.get('name')
         if name:
             alias = ""
-            if "pr" not in name.lower() and "ride" not in name.lower():
+            pr = ["pr", "p+r", "p&r", "park and", "park &", "parking"]
+            if all(x not in name.lower() for x in pr):
                 name = "{} PR".format(name)
                 alias = utils.to_alias_json(name, r.get('name'))
             n['id'] = "pr-{}".format(i+1)
