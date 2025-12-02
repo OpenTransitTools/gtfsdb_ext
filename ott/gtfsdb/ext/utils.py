@@ -30,9 +30,12 @@ def mk_feed_stop(feed_id, stop_id=""):
     return "{}:{}".format(feed_id, stop_id)
 
 
-def mk_feed_rec(feed_id, stop_id="", agency_id=""):
+def mk_feed_rec(feed_id, stop_id="", agency_id="", use_agency=False):
     feed_id, stop_id, agency_id = get_idz(feed_id, stop_id, agency_id)
-    return "{}:{}:{}".format(agency_id, feed_id, stop_id)
+    if use_agency:
+        ret_val = "{}:{}:{}".format(agency_id, feed_id, stop_id)
+    else:
+        ret_val = "{}:{}".format(feed_id, stop_id)
 
 
 def mk_shared_id(stops, min_stops=2, def_val=""):
@@ -44,10 +47,10 @@ def mk_shared_id(stops, min_stops=2, def_val=""):
     return ret_val
 
 
-def cmp_stop(stop, feed_id, stop_id, agency_id=None):
+def cmp_stop(stop, feed_id, stop_id, agency_id=None, use_agency=False):
     f, s, a = get_idz(stop)
     #import pdb; pdb.set_trace()
-    return f == feed_id and s == stop_id and (agency_id is None or a == agency_id)
+    return f == feed_id and s == stop_id and (use_agency is False or agency_id is None or a == agency_id)
 
 
 def match_stop(stops, feed_id, stop_id, agency_id=None, start_index=0):
@@ -108,9 +111,14 @@ def find_shareds(shared_stops, target):
 
 
 def strip_agency_id(id):
-    "C-TRAN:CTRAN:4 becomes CTRAN:4"
+    "
+      will take this id: C-TRAN:CTRAN:4
+      and return this: s CTRAN:4
+      will only do this if there are more than one colon
+    "
     ret_val = id
-    parts = id.split(":", 1)
-    if len(parts) > 1:
-        ret_val = parts[1]
+    if id and id.count(":") > 1:
+        parts = id.split(":", 1)
+        if len(parts) > 1:
+            ret_val = parts[1]
     return ret_val
