@@ -1,3 +1,4 @@
+import re
 import csv
 import requests
 from . import utils
@@ -28,9 +29,10 @@ def to_csv(json, output):
 
     layer = "pr"
     source = "transit"
-    n = utils.make_pelias_csv_record(layer=layer, source=source, aliases=" ")
+    rec = utils.make_pelias_csv_record(layer=layer, source=source, aliases=" ")
 
-    writer = csv.DictWriter(output, fieldnames=n.keys())
+    pr_string = "Park & Ride"
+    writer = csv.DictWriter(output, fieldnames=rec.keys())
     writer.writeheader()
     for i, r in enumerate(json):
         name = r.get('name')
@@ -38,12 +40,21 @@ def to_csv(json, output):
             alias = ""
             pr = ["pr", "p+r", "p&r", "park and", "park &", "parking"]
             if all(x not in name.lower() for x in pr):
-                name = "{} PR".format(name)
-                alias = utils.to_alias_json(name, r.get('name'))
-            n['id'] = "pr-{}".format(i+1)
-            n['name_json'] = alias
-            utils.set_name_lat_lon(n, name, r.get('y'), r.get('x'))
-            writer.writerow(n)
+                tmp = name
+                name = "{} {}".format(name, pr_string)
+                alias = utils.to_alias_json(tmp, name)
+            else:
+                for pr in ["pr", "p+r", "p&r"]:
+                    if pr in name.lower():
+                        tmp = name
+                        name = re.sub(pr, pr_string, name, flags=re.IGNORECASE)
+                        alias = utils.to_alias_json(tmp, name)
+                        break
+
+            rec['id'] = "pr-{}".format(i+1)
+            rec['name_json'] = alias
+            utils.set_name_lat_lon(rec, name, r.get('y'), r.get('x'))
+            writer.writerow(rec)
 
 
 
