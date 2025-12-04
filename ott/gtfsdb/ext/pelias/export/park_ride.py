@@ -38,20 +38,28 @@ def to_csv(json, output):
         name = r.get('name')
         if name:
             alias = ""
-            pr = ["pr", "p+r", "p&r", "park and", "park &", "parking"]
-            if all(x not in name.lower() for x in pr):
+
+            # if the name lacks any "PR", "Park and Ride", etc... indication, append "Park & Ride" to it
+            pr_regex = ["\sPR(\s|$)", "\sP+R(\s|$)", "\sP&R(\s|$)", "park and", "park &", "parking"]
+            if all(not re.search(x, name, flags=re.IGNORECASE) for x in pr_regex):
                 tmp = name
-                name = "{} {}".format(name, pr_string)
-                alias = utils.to_alias_json(tmp, name)
+                name = f"{name} {pr_string}"
+                alias = utils.to_alias_json(tmp, tmp + " PR")
             else:
-                for pr in ["pr", "p+r", "p&r"]:
-                    if pr in name.lower():
+                # rename abbreviated "PR","P&R", "P+R" etc... to "Park & Ride"
+                tmp = None
+                for pr in ["PR", "P+R", "P&R"]:
+                    if pr in name.upper():
                         tmp = name
                         name = re.sub(pr, pr_string, name, flags=re.IGNORECASE)
-                        alias = utils.to_alias_json(tmp, name)
+                        alias = utils.to_alias_json(tmp, tmp + " PR")
                         break
 
-            rec['id'] = "pr-{}".format(i+1)
+                # name didn't have a "PR" shorthand above, so add PR as an alias to help find using shorthand
+                if tmp is None:
+                    alias = utils.to_alias_json(name, name + " PR")
+
+            rec['id'] = f"pr-{i+1}"
             rec['name_json'] = alias
             utils.set_name_lat_lon(rec, name, r.get('y'), r.get('x'))
             writer.writerow(rec)
