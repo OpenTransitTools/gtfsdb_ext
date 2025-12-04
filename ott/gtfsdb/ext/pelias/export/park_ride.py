@@ -58,12 +58,12 @@ def to_csv(json, output):
                             name = name.replace(pr, pr_string)
                             break
                 else:
+                    # name didn't have a "PR" shorthand above, so add PR as an alias to help find using shorthand
+                    alias = utils.to_alias_json(name, name + " PR")
+
                     # note: rename Park and Ride names from OSM to Park & Ride
                     if "Park and Ride" in name:
                         name = re.sub("Park and Ride", pr_string, name, flags=re.IGNORECASE).strip()
-
-                    # name didn't have a "PR" shorthand above, so add PR as an alias to help find using shorthand
-                    alias = utils.to_alias_json(name, name + " PR")
 
             rec['id'] = f"pr-{i+1}"
             rec['name_json'] = alias
