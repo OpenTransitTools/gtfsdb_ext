@@ -31,32 +31,34 @@ def to_csv(json, output):
     source = "transit"
     rec = utils.make_pelias_csv_record(layer=layer, source=source, aliases=" ")
 
-    pr_string = "Park & Ride"
+    pr_string = "Park and Ride"
     writer = csv.DictWriter(output, fieldnames=rec.keys())
     writer.writeheader()
-    for i, r in enumerate(json):
+    sorted_json = sorted(json, key=lambda x: x.get('name'))
+    for i, r in enumerate(sorted_json):
         name = r.get('name')
         if name:
             alias = ""
 
             # if the name lacks any "PR", "Park and Ride", etc... indication, append "Park & Ride" to it
-            pr_regex = ["\sPR(\s|$)", "\sP+R(\s|$)", "\sP&R(\s|$)", "park and", "park &", "parking"]
+            #abbrev_regex = ["\\sPR(\\s|$)", "\\sP\\+R(\\s|$)", "\\sP\\&R(\\s|$)"]
+            abbrev_regex = ["\\sPR(\\s|$)", "\\sP+R(\\s|$)", "\\sP&R(\\s|$)"]
+            pr_regex = abbrev_regex + ["park and", "park &", "parking"]
             if all(not re.search(x, name, flags=re.IGNORECASE) for x in pr_regex):
-                tmp = name
+                alias = utils.to_alias_json(name, name + " PR")
                 name = f"{name} {pr_string}"
-                alias = utils.to_alias_json(tmp, tmp + " PR")
             else:
                 # rename abbreviated "PR","P&R", "P+R" etc... to "Park & Ride"
-                tmp = None
-                for pr in ["PR", "P+R", "P&R"]:
-                    if pr in name.upper():
-                        tmp = name
-                        name = re.sub(pr, pr_string, name, flags=re.IGNORECASE)
-                        alias = utils.to_alias_json(tmp, tmp + " PR")
-                        break
-
-                # name didn't have a "PR" shorthand above, so add PR as an alias to help find using shorthand
-                if tmp is None:
+                if any(re.search(x, name, flags=re.IGNORECASE) for x in abbrev_regex):
+                    alias = utils.to_alias_json(name, name + " PR")
+                    if "PR" in name.upper():
+                        name = re.sub("\\sPR(\\s|$)", " " + pr_string + " ", name, flags=re.IGNORECASE).strip()
+                    for pr in ["P+R", "P&R"]:
+                        if pr in name.upper():
+                            name = name.replace(pr, pr_string)
+                            break
+                else:
+                    # name didn't have a "PR" shorthand above, so add PR as an alias to help find using shorthand
                     alias = utils.to_alias_json(name, name + " PR")
 
             rec['id'] = f"pr-{i+1}"
@@ -66,6 +68,7 @@ def to_csv(json, output):
 
 
 
+#def query(url="https://maps.trimet.org/rtp/routers/default/park_and_ride"):
 def query(url="https://ws.trimet.org/rtp/routers/default/park_and_ride"):
     ret_val = None
     response = requests.get(url)
