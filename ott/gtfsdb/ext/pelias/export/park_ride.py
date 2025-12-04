@@ -31,7 +31,7 @@ def to_csv(json, output):
     source = "transit"
     rec = utils.make_pelias_csv_record(layer=layer, source=source, aliases=" ")
 
-    pr_string = "Park and Ride"
+    pr_string = "Park & Ride"
     writer = csv.DictWriter(output, fieldnames=rec.keys())
     writer.writeheader()
     sorted_json = sorted(json, key=lambda x: x.get('name'))
@@ -58,6 +58,10 @@ def to_csv(json, output):
                             name = name.replace(pr, pr_string)
                             break
                 else:
+                    # note: rename Park and Ride names from OSM to Park & Ride
+                    if "Park and Ride" in name:
+                        name = re.sub("Park and Ride", pr_string, name, flags=re.IGNORECASE).strip()
+
                     # name didn't have a "PR" shorthand above, so add PR as an alias to help find using shorthand
                     alias = utils.to_alias_json(name, name + " PR")
 
