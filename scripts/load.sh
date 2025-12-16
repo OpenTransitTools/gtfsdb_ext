@@ -10,6 +10,7 @@ LOADDIR=`dirname $0`
 
 required_feed=${1:-TRIMET}
 ext_data_dir="${LOADDIR}/../data/${required_feed,,}"
+mkdir -p $ext_data_dir
 
 chk=${GTFS_DIR}/${required_feed}.gtfs.zip
 if [ -f $chk ]; then
@@ -56,13 +57,13 @@ if [ -f $chk ]; then
   cd $LOADDIR/../
 
   echo " step 5a: curl the shared stops"
-  CSV="ss.csv"
-  rm -f $CSV
-  curl "https://developer.trimet.org/ws/v3/sharedStops?csv=true&appid=8CBD14D520C6026CC7EEE56A9" > $CSV
+  SSCSV="${ext_data_dir}/shared_stops.csv"
+  rm -f $SSCSV
+  curl "https://developer.trimet.org/ws/v3/sharedStops?csv=true&appid=8CBD14D520C6026CC7EEE56A9" > $SSCSV
   echo
 
   echo " step 5b: load / update shared stops"
-  cmd="poetry run update-shared-stops -s ${required_feed} -d $ott_url ${CSV} "
+  cmd="poetry run update-shared-stops -s ${required_feed} -d $ott_url ${SSCSV}"
   echo $cmd
   eval $cmd
   cd -
@@ -82,8 +83,9 @@ if [ -f $chk ]; then
   echo "step 7: create the 'current' views, etc..."
   echo "  NOTE: we need views to run after shared-stops, as we then exclude shared stops"
   echo "**********************************************************"
+  make_views ${GTFS_DIR} ${ext_data_dir}
   copy_views ${GTFS_DIR} ${ext_data_dir}
-  load_views  
+  load_views
   echo;  echo;
 else
   echo "WARN: not loading as file $chk *does not* exist."

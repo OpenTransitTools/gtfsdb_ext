@@ -3,18 +3,17 @@ VIEWDIR=`dirname $0`
 
 #
 # use the convert tool (https://github.com/OpenTransitTools/convert) to create 'current' schema materizlized .views file
-# note: these are aggregate tables (routes/stops/flex/etc..) containing data from all agencies in the region
 #
 function make_views() {
   local gtfs_dir=${1:-"$HOME/gtfs"}
-  local convert_dir=${2:-"$HOME/rtp/convert"}
+  local agency_dir=${2:-"$VIEWDIR/../data/trimet"}
 
-  cd $convert_dir
+  cd $agency_dir
   rm -f *.txt
   poetry run gtfs_feeds -sql
   for x in *.txt
   do
-    local cmd="mv $x ${gtfs_dir}/${x%%.txt}.views"
+    local cmd="mv $x ${x%%.txt}.views; cp ${x%%.txt}.views $gtfs_dir/"
     echo $cmd
     eval $cmd
   done
