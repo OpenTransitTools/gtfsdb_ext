@@ -18,6 +18,8 @@ def build_shared_stops_data(stops_csv_file, db, src_feed_id):
 
     reads shared_stops.csv, then queries the database to build upon that structure 
     """
+    #import pdb; pdb.set_trace()
+    #print(f"open file: ...{stops_csv_file}...")
     stop_dict = get_csv(stops_csv_file)
     for s in stop_dict:
         s['agencies'] = None

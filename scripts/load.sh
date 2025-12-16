@@ -56,13 +56,13 @@ if [ -f $chk ]; then
   cd $LOADDIR/../
 
   echo " step 5a: curl the shared stops"
-  CSV=ss.csv
+  CSV="ss.csv"
   rm -f $CSV
   curl "https://developer.trimet.org/ws/v3/sharedStops?csv=true&appid=8CBD14D520C6026CC7EEE56A9" > $CSV
   echo
 
   echo " step 5b: load / update shared stops"
-  cmd="poetry run update-shared-stops -s ${required_feed} -d $ott_url $CSV"
+  cmd="poetry run update-shared-stops -s ${required_feed} -d $ott_url ${CSV} "
   echo $cmd
   eval $cmd
   cd -

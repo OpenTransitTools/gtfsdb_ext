@@ -111,11 +111,11 @@ def find_shareds(shared_stops, target):
 
 
 def strip_agency_id(id):
-    "
-      will take this id: C-TRAN:CTRAN:4
-      and return this: s CTRAN:4
-      will only do this if there are more than one colon
-    "
+    """
+    will take this id: C-TRAN:CTRAN:4
+    and return this: s CTRAN:4
+    will only do this if there are more than one colon
+    """
     ret_val = id
     if id and id.count(":") > 1:
         parts = id.split(":", 1)
