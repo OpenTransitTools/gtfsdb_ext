@@ -17,6 +17,8 @@ def reset_logging(level=logging.CRITICAL):
 
 
 def get_idz(feed_id, stop_id="", agency_id="?"):
+    """ note: feed_id can be either a str or dict """
+    #import pdb; pdb.set_trace()
     if isinstance(feed_id, dict):
         so = feed_id
         feed_id = so.get("FEED_ID", so.get("feed_id", feed_id))
@@ -27,16 +29,22 @@ def get_idz(feed_id, stop_id="", agency_id="?"):
 
 def mk_feed_stop(feed_id, stop_id=""):
     feed_id, stop_id, agency_id = get_idz(feed_id, stop_id)
-    return "{}:{}".format(feed_id, stop_id)
+    return f"{feed_id}:{stop_id}"
 
 
 def mk_feed_rec(feed_id, stop_id="", agency_id="", use_agency=False):
+    """
+    return an id string
+    format is either <FEED_ID>:<STOP_ID> or <AGENCY_ID>:<FEED_ID>:<STOP_ID>
+    NOTE: input feed_id param can be either a str or dict (see get_idz() parse)
+    """
+    #import pdb; pdb.set_trace()
     feed_id, stop_id, agency_id = get_idz(feed_id, stop_id, agency_id)
     if use_agency:
-        ret_val = "{}:{}:{}".format(agency_id, feed_id, stop_id)
+        ret_val = f"{agency_id}:{feed_id}:{stop_id}"
     else:
-        ret_val = "{}:{}".format(feed_id, stop_id)
-
+        ret_val = f"{feed_id}:{stop_id}"
+    return ret_val
 
 def mk_shared_id(stops, min_stops=2, def_val=""):
     ret_val = def_val
@@ -48,8 +56,8 @@ def mk_shared_id(stops, min_stops=2, def_val=""):
 
 
 def cmp_stop(stop, feed_id, stop_id, agency_id=None, use_agency=False):
-    f, s, a = get_idz(stop)
     #import pdb; pdb.set_trace()
+    f, s, a = get_idz(stop)
     return f == feed_id and s == stop_id and (use_agency is False or agency_id is None or a == agency_id)
 
 

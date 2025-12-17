@@ -52,10 +52,10 @@ def build_shared_stops_data(stops_csv_file, db, src_feed_id):
 
 def db_rec_to_shared_stop(rec, skip=0):
     # step 1: parse the elements from shared_stops.csv    
-    id=rec.get('stop_id')
-    desc=rec.get('agency_name')
-    aid=rec.get('agency_id')
-    feed=rec.get('feed_id')
+    sid = rec.get('stop_id')
+    desc = rec.get('agency_name')
+    aid = rec.get('agency_id')
+    feed = rec.get('feed_id')
 
     # step 2: find all the agencies for a given feed
     age=rec.get('agencies')
@@ -85,7 +85,7 @@ def db_rec_to_shared_stop(rec, skip=0):
         stops.append(m)
 
     ret_val = {
-        'desc': "{} -> {}({}) ".format(id, desc, aid),
+        'desc': "{} -> {}({}) ".format(sid, desc, aid),
         'distance': distance,
         'stops': stops,
         'filter': False,
@@ -218,8 +218,9 @@ def shared_stops_parser(csvfile, db, src_feed_id):
                 stopz.extend(acts)
 
         # step c: make the <agency>:<feed>:<stop>,<agenc... string and assign to stops
-        id = mk_shared_id(stopz)
-        s['shared_id'] = id
+        #import pdb; pdb.set_trace()
+        sid = mk_shared_id(stopz)
+        s['shared_id'] = sid
  
     return ret_val
 

@@ -1,7 +1,7 @@
-##
-## load gtfsdb spatial db for OTT
-## *note*: requires the ott db to exist 
-##
+#
+# load gtfsdb spatial db for OTT
+# *note*: requires the ott db to exist 
+#
 LOADDIR=`dirname $0`
 . $LOADDIR/base.sh
 . $LOADDIR/shapes.sh
@@ -64,6 +64,9 @@ if [ -f $chk ]; then
 
   echo " step 5b: load / update shared stops"
   cmd="poetry run update-shared-stops -s ${required_feed} -d $ott_url ${SSCSV}"
+  echo $cmd
+  eval $cmd
+  cmd="poetry run shared-stops-report -d $ott_url ${SSCSV} > ${ext_data_dir}/shared_stops.html"
   echo $cmd
   eval $cmd
   cd -
