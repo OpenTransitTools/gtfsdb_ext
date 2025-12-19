@@ -1,6 +1,5 @@
 VIEWDIR=`dirname $0`
 
-
 #
 # use the convert tool (https://github.com/OpenTransitTools/convert) to create 'current' schema materizlized .views file
 #
@@ -19,7 +18,6 @@ function make_views() {
   done
   cd -
 }
-
 
 #
 # copy all .views files from this project's data 'customization' folder data/<name>/*.views 

@@ -72,7 +72,16 @@ if [ -f $chk ]; then
   cd -
   echo; echo;
 
-  echo "step 6: export the agency data for deploy to other servers"
+  # TODO ... maybe? replace #6 and #7 with export/geoserver.sh (keep load_views tho)
+  echo "step 6: create the 'current' views, etc..."
+  echo "  NOTE: we need views to run after shared-stops, as we then exclude shared stops"
+  echo "**********************************************************"
+  make_views ${GTFS_DIR} ${ext_data_dir}
+  copy_views ${GTFS_DIR} ${ext_data_dir}
+  load_views
+  echo;  echo;
+
+  echo "step 7: export the agency data for deploy to other servers"
   echo "**********************************************************"
   for f in ${GTFS_DIR}/*gtfs.zip
   do
@@ -82,14 +91,6 @@ if [ -f $chk ]; then
     eval $dump
   done
   echo; echo;
-
-  echo "step 7: create the 'current' views, etc..."
-  echo "  NOTE: we need views to run after shared-stops, as we then exclude shared stops"
-  echo "**********************************************************"
-  make_views ${GTFS_DIR} ${ext_data_dir}
-  copy_views ${GTFS_DIR} ${ext_data_dir}
-  load_views
-  echo;  echo;
 else
   echo "WARN: not loading as file $chk *does not* exist."
 fi
