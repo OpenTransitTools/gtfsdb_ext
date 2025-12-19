@@ -14,7 +14,7 @@ do
   name=$(feed_name_from_zip $f)
   dump="$pg_dump $db -n ${name} > ${GTFS_DIR}/${name}.sql"
   echo $dump
-  #eval $dump
+  eval $dump
 done
 echo; echo;
 
