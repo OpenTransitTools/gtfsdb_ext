@@ -4,7 +4,7 @@ SHPDIR=`dirname $0`
 SCP=${1:-""}
 DIR=${2:-"${HOME}/gtfs"}
 
-# export pelias .csv file for each feed
+# export stops .csv for each feed (pelias format)
 for z in `ls ${DIR}/*zip`
 do 
   f=${z##*/}
@@ -14,6 +14,9 @@ do
   eval $cmd
 done
 
+cmd="poetry run pelias-pr > \"${DIR}/pr.csv\""
+echo $cmd
+eval $cmd
 
 if [ $SCP ]; then
   cmd="scp -q ${DIR}/*.csv $SCP:~/gtfs/"
