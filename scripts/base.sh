@@ -24,9 +24,11 @@ ott_url=${OTT_URL:-postgresql://${user}:${pass}@${db_svr}:${db_port}/$db}
 if [ -f "$mac_psql" ]; then
   psql=$mac_psql
   pg_restore="pg_restore"
+  pg_dump="pg_dump"
 elif [ -f "$unix_psql" ]; then
   psql=$unix_psql
   pg_restore="pg_restore"
+  pg_dump="pg_dump"
 else
   docker_exe="docker exec -i -u $def_user"
   psql_term=${psql:-"$docker_exe -it db psql"}
