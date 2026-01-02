@@ -1,15 +1,16 @@
 
 
-def make_pelias_csv_record(id="", name="", lat=0.0, lon=0.0, source="", layer="", aliases=None, popularity=-111):
+def make_pelias_csv_record(id="", name="", lat=0.0, lon=0.0, source="", layer="", popularity=-111, aliases=None, addendum=None):
     """
     create a csv format according to the Pelias csv loader specs
     https://github.com/pelias/csv-importer?tab=readme-ov-file#overview
     """
     ret_val = {"id": id, "name": name, "lat": lat, "lon": lon, "source": source, "layer": layer}
 
-    # optional csv columns
-    if aliases: ret_val["name_json"] = aliases
+    # optional columns
     if popularity >= 0: ret_val["popularity"] = popularity
+    if aliases: ret_val["name_json"] = aliases
+    if addendum: ret_val["addendum_json_gtfs"] = addendum
 
     return ret_val
 
