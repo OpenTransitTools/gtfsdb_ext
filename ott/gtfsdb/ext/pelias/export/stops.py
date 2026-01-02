@@ -49,9 +49,10 @@ def to_csv(stops, feed_id, output):
         return ret_val
 
     # output the pelias .csv data
-    for i, s in enumerate(stops):
+    writer = None
+    for s in stops:
         feed_stop_id = f"{feed_id}:{s.stop_id}"
-        r = utils.make_pelias_csv_record(
+        rec = utils.make_pelias_csv_record(
             id=feed_stop_id,
             layer=feed_id + ":stops", source="transit",
             name=make_stop_name(s, feed_id),
@@ -62,11 +63,11 @@ def to_csv(stops, feed_id, output):
         )
 
         # create the output csv writer on first pass
-        if i == 0:
-            writer = csv.DictWriter(output, fieldnames=r.keys())
+        if writer is None:
+            writer = csv.DictWriter(output, fieldnames=rec.keys())
             writer.writeheader()
 
-        writer.writerow(r)
+        writer.writerow(rec)
 
 
 def query(feed, output, url="postgresql://ott:ott@localhost:5432/ott"):

@@ -14,7 +14,7 @@ do
   eval $cmd
 done
 
-cmd="poetry run pelias-pr > \"${DIR}/pr.csv\""
+cmd="poetry run pelias-pr ${DIR}/pr.csv"
 echo $cmd
 eval $cmd
 
