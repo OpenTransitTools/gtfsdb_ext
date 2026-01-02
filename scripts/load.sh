@@ -10,6 +10,11 @@ LOADDIR=`dirname $0`
 
 required_feed=${1:-TRIMET}
 ext_data_dir="${LOADDIR}/../data/${required_feed,,}"
+if [ ! $ext_data_dir ]; then
+  # the ,, to lower above doesn't work on Mac
+  ext_data_dir="${LOADDIR}/../data/${required_feed}"
+fi
+echo mkdir $ext_data_dir
 mkdir -p $ext_data_dir
 
 chk=${GTFS_DIR}/${required_feed}.gtfs.zip
