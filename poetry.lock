@@ -155,7 +155,7 @@ PyYAML = "^6.0"
 type = "git"
 url = "https://github.com/OpenTransitTools/convert.git"
 reference = "HEAD"
-resolved_reference = "fc17c8ff46cb2b09f7b8f9e3cf800fae08e6aa3b"
+resolved_reference = "73b700b73f1adbb44b418af19e62829ddf0707b7"
 
 [[package]]
 name = "future"
@@ -291,7 +291,7 @@ postgresql = ["psycopg2-binary"]
 type = "git"
 url = "https://github.com/OpenTransitTools/gtfsdb.git"
 reference = "rtp"
-resolved_reference = "e7b6f9e52e90dcd0c52c8c4c7832823e43cdf468"
+resolved_reference = "6096d8624b70c94b94f1c572d32fcef447718bf5"
 
 [[package]]
 name = "idna"
@@ -458,7 +458,7 @@ validators = "*"
 type = "git"
 url = "https://github.com/OpenTransitTools/utils.git"
 reference = "rtp"
-resolved_reference = "cf8f65412ac7640d083d355d8457b526fda06feb"
+resolved_reference = "47e459025fea5f43957eda8320022b6f11f1f375"
 
 [[package]]
 name = "packaging"
