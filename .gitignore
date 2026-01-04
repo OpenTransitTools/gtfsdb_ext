@@ -6,6 +6,8 @@
 *$py.class
 *.txt
 *.csv
+data
+.DS_Store
 x
 y
 z

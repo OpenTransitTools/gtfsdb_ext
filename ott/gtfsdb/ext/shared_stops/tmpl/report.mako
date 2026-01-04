@@ -6,12 +6,15 @@ ${start_table()}
 ${table_row(s)}\
 %endfor
 ${end_table()}
+<h4>note: <a href="https://developer.trimet.org/ws/v3/sharedStops?appid=8CBD14D520C6026CC7EEE56A9" target="#">TRANS share stops</a></h4>
 <h4>note these ${src_feed_id} stops appear to be inactive (not in the ${src_feed_id}.gtfs.zip): \
 %for k,v in not_active.items():
   ${stop_url(k, v)} \
 %endfor
 </h4>
+%if unsupported:
 <h4>note these agencies are currently unsupported: ${', '.join(str(v) for v in unsupported.values())}</h4>
+%endif
 ${end_html()}
 
 <%def name="start_html()">\
@@ -57,7 +60,7 @@ now=datetime.datetime.now()
 </%def>
 
 
-<%def name="link(s)">${"*" if s.get('duplicate') else ""}<a href="https://rtp.trimet.org/rtp/#/nearby/${s.get('lat')},${s.get('lon')}" target="#">${s.get('feed_id')} ${s.get('stop_id')} ${"</a>" if s.get('stop_id')==s.get('stop_code') else " (<i>" + s.get('stop_code') + "</i>)</a>"}</%def>
+<%def name="link(s)">${"*" if s.get('duplicate') else ""}<a href="https://rtp.trimet.org/rtp/#/nearby/${s.get('lat')},${s.get('lon')}" target="#">${s.get('feed_id')} ${s.get('stop_id')} ${"</a>" if s.get('stop_code') is None or s.get('stop_id')==s.get('stop_code') else " (<i>" + s.get('stop_code') + "</i>)</a>"}</%def>
 
 
 <%def name="urls(ss)">\
