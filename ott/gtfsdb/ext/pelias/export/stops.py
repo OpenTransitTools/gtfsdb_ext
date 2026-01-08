@@ -5,6 +5,31 @@ from gtfsdb import *
 from . import utils
 
 
+prior_agency_name=None
+def get_agency_name(stop, feed_id):
+   """ find agecy id someplace (hopefully from db and not feed_id, but...) """
+    #import pdb; pdb.set_trace()
+    global prior_agency_name
+    ret_val = stop.stop.agency_name
+    try:
+        if not ret_val:
+            n = stop.session.query(Agency).first().agency_name
+            if n:
+                ret_val = n
+            elif prior_agency_name:
+                ret_val = prior_agency_name
+    except Exception as e:
+        #print(e)
+        pass
+    finally:
+        if not ret_val:
+            ret_val = feed_id.capitalize()
+        else:
+            prior_agency_name = ret_val
+
+    return ret_val
+
+
 def to_csv(stops, feed_id, output):
     """
     create a stops.csv for Pelias
@@ -40,7 +65,7 @@ def to_csv(stops, feed_id, output):
 
     def make_stop_name(stop, feed_id):
         # stop name with agency and stop_code info appended
-        agency = stop.stop.agency_name or feed_id.capitalize()
+        agency = get_agency_name(stop, feed_id)
         code = stop.get_stop_code()
         if code:
             ret_val = f"{stop.stop_name} ({agency} Stop ID {code})"
