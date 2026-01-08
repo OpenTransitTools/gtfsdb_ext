@@ -79,11 +79,12 @@ def to_csv(stops, feed_id, output):
         feed_stop_id = f"{feed_id}:{s.stop_id}"
         rec = utils.make_pelias_csv_record(
             id=feed_stop_id,
-            layer=feed_id + ":stops", source="transit",
+            layer=f"{feed_id}:stops",
+            source="transit",
             name=make_stop_name(s, feed_id),
             lat=s.stop_lat, lon=s.stop_lon,
             popularity=to_popularity(s, feed_id),
-            aliases=utils.to_alias_json(s.stop_id, s.get_stop_code() or feed_stop_id),
+            aliases=utils.to_alias_json(s.stop_id, s.get_stop_code() or feed_stop_id), # todo: maybe do something with stop.stop.shared_stops
             addendum=to_addendum_json(s, feed_id)
         )
 

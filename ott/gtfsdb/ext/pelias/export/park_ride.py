@@ -18,21 +18,21 @@ def to_csv(json, output, pr_string="Park & Ride"):
             abbrev_regex = ["\\sPR(\\s|$)", "\\sP+R(\\s|$)", "\\sP&R(\\s|$)"]
             pr_regex = abbrev_regex + ["park and", "park &", "parking"]
             if all(not re.search(x, name, flags=re.IGNORECASE) for x in pr_regex):
-                alias = utils.to_alias_json(name, name + " PR")
+                alias = utils.to_alias_json(name, f"{name} PR")
                 name = f"{name} {pr_string}"
             else:
                 # rename abbreviated "PR","P&R", "P+R" etc... to "Park & Ride"
                 if any(re.search(x, name, flags=re.IGNORECASE) for x in abbrev_regex):
-                    alias = utils.to_alias_json(name, name + " PR")
+                    alias = utils.to_alias_json(name, f"{name} PR")
                     if "PR" in name.upper():
-                        name = re.sub("\\sPR(\\s|$)", " " + pr_string + " ", name, flags=re.IGNORECASE).strip()
+                        name = re.sub("\\sPR(\\s|$)", f" {pr_string} ", name, flags=re.IGNORECASE).strip()
                     for pr in ["P+R", "P&R"]:
                         if pr in name.upper():
                             name = name.replace(pr, pr_string)
                             break
                 else:
                     # name didn't have a "PR" shorthand above, so add PR as an alias to help find using shorthand
-                    alias = utils.to_alias_json(name, name + " PR")
+                    alias = utils.to_alias_json(name, f"{name} PR")
 
                     # note: rename Park and Ride names from OSM to Park & Ride
                     if "Park and Ride" in name:

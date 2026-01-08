@@ -1,5 +1,3 @@
-
-
 def make_pelias_csv_record(id="", name="", lat=0.0, lon=0.0, source="", layer="", popularity=-111, aliases=None, addendum=None):
     """
     create a csv format according to the Pelias csv loader specs
