@@ -7,7 +7,7 @@ from . import utils
 
 prior_agency_name=None
 def get_agency_name(stop, feed_id):
-   """ find agecy id someplace (hopefully from db and not feed_id, but...) """
+    """ find agecy id someplace (hopefully from db and not feed_id, but...) """
     #import pdb; pdb.set_trace()
     global prior_agency_name
     ret_val = stop.stop.agency_name
