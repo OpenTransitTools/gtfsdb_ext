@@ -155,7 +155,7 @@ PyYAML = "^6.0"
 type = "git"
 url = "https://github.com/OpenTransitTools/convert.git"
 reference = "HEAD"
-resolved_reference = "55bb0516360a61f960754eb0212c9f06f5611192"
+resolved_reference = "28c62d7823286ad00988a7f34010f79db44db8aa"
 
 [[package]]
 name = "future"
