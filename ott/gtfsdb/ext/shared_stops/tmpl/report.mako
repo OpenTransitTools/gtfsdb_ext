@@ -61,12 +61,13 @@ now=datetime.datetime.now()
 
 
 <%def name="link(s)">${"*" if s.get('duplicate') else ""}<a href="https://rtp.trimet.org/rtp/#/nearby/${s.get('lat')},${s.get('lon')}" target="#">${s.get('feed_id')} ${s.get('stop_id')} ${"</a>" if s.get('stop_code') is None or s.get('stop_id')==s.get('stop_code') else " (<i>" + s.get('stop_code') + "</i>)</a>"}</%def>
+<%def name="tm_link(s)">${"*" if s.get('duplicate') else ""}<a href="https://beta.trimet.org/home/stop/${s.get('feed_id')}:${s.get('stop_id')}/" target="#">${s.get('feed_id')} ${s.get('stop_id')} ${"</a>" if s.get('stop_code') is None or s.get('stop_id')==s.get('stop_code') else " (<i>" + s.get('stop_code') + "</i>)</a>"}</%def>
 
 
 <%def name="urls(ss)">\
 %for i, s in enumerate(ss.get('stops')):
 %if i > 0:
-${link(s)}${"<B>,</B>&nbsp;" if i+1<len(ss.get('stops')) else ""}\
+${tm_link(s)}${"<B>,</B>&nbsp;" if i+1<len(ss.get('stops')) else ""}\
 %endif
 %endfor
 </%def>
@@ -76,7 +77,7 @@ ${link(s)}${"<B>,</B>&nbsp;" if i+1<len(ss.get('stops')) else ""}\
     <tr>
       <td>${s.get('desc')}</td>
       <td>${s.get('distance')}</td>
-      <td>${link(s.get('stops', [])[0])}</td>
+      <td>${tm_link(s.get('stops', [])[0])}</td>
       <td>${urls(s)}</td>
       <td>${shared_stop_url(s.get('shared_id'))}</td>
     </tr>
@@ -88,7 +89,7 @@ ${link(s)}${"<B>,</B>&nbsp;" if i+1<len(ss.get('stops')) else ""}\
 <%def name="shared_stop_url(shared_id)">\
 %if ":" in shared_id:
 %for s in shared_id.split(","):
-<a href="https://rtp.trimet.org/rtp/#/schedule/${s.split(':',1)[1]}" target="#${shared_id}">${s}</a>, \
+<a href="https://rtp.trimet.org/rtp/#/schedule/${s}" target="#${shared_id}">${s}</a>, \
 %endfor
 %endif
 </%def>
