@@ -1,4 +1,4 @@
-do_load=${1:-"just_echo"}
+do_load=${1:-"type__load__here"}
 db_svr=${2:-"localhost"}
 db_port=${3:-"5432"}
 
