@@ -10,7 +10,7 @@ reset_logging() # NOTE: turn off all logging so it doesn't bleed into the report
 this_module_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
 
-def generate_report(ss, src_feed_id, tmpl = 'report.mako'):
+def generate_report(ss, src_feed_id, tmpl='report.mako'):
     # import pdb; pdb.set_trace()
     stops = sorted(ss['shared'], key=lambda x: x.get('distance', 2112.2112), reverse=True)
     # note: the this_mod_dir / tmpl should find the mako stuff here, but also hard code a couple svr directories for good measure in case we want to run things from outside this project
@@ -35,4 +35,10 @@ def create_report():
     args, db, ss = cmd_line_get_shared_stops('shared-stops-report')
     report = generate_report(ss, args.schema)
     print(report)
+
+
+def create_csv():
+    args, db, ss = cmd_line_get_shared_stops('shared-stops-csv')
+    csv = generate_report(ss, args.schema, "csv.mako")
+    print(csv)
 

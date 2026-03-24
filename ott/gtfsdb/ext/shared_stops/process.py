@@ -5,8 +5,6 @@ from gtfsdb.scripts import get_args
 from .. import query
 from ..utils import *
 
-#reset_logging()
-
 
 def build_shared_stops_data(stops_csv_file, db, src_feed_id):
     """
@@ -239,7 +237,7 @@ def update_db(shared_stops, db):
 def cmd_line_get_shared_stops(prog_name="shared-stops"):
     args, kwargs = get_args(prog_name=prog_name)
     if args.schema is None:
-        print("WARNING: you probably need to define '-s <scehma>' on the cmdline for the query agency.  Will default to 'TRIMET'")
+        #logging.info("WARNING: you probably need to define '-s <scehma>' on the cmdline for the query agency.  Will default to 'TRIMET'")
         args.schema = "TRIMET"
 
     db = Database(**kwargs)
