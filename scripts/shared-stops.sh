@@ -1,13 +1,14 @@
 LOADDIR=`dirname $0`
 
-required_feed=${1:-TRIMET}
+required_feed=${1:-"TRIMET"}
 db_svr=${2:-"localhost"}
 db_port=${3:-"5432"}
 ext_data_dir=${4:-"$LOADDIR/../data/shared_stops"}
 . $LOADDIR/base.sh
 
-
+echo mkdir $ext_data_dir
 mkdir -p $ext_data_dir
+chmod 755 $ext_data_dir
 
 echo "run the shared stops population (run from gtfsdb_ext/ home dir)"
 echo "***********************************************************************"
@@ -23,7 +24,6 @@ echo " step 2: load shared stops"
 cmd="poetry run update-shared-stops -s ${required_feed} -d $ott_url ${SSCSV}"
 echo $cmd
 eval $cmd
-
 
 echo " step 3: shared stops report"
 cmd="poetry run shared-stops-report -d $ott_url ${SSCSV} > ${ext_data_dir}/shared_stops.html"
