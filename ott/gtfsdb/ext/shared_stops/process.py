@@ -1,9 +1,8 @@
-from gtfsdb import Database
 from gtfsdb.util import get_csv
-from gtfsdb.scripts import get_args
 
 from .. import query
 from ..utils import *
+from . import cmdline
 
 
 def build_shared_stops_data(stops_csv_file, db, src_feed_id):
@@ -234,17 +233,6 @@ def update_db(shared_stops, db):
                     query.set_shared_stop(db, ss.get('shared_id'), feed_id, stop_id, "CURRENT_STOPS")
 
 
-def cmd_line_get_shared_stops(prog_name="shared-stops"):
-    args, kwargs = get_args(prog_name=prog_name)
-    if args.schema is None:
-        #logging.info("WARNING: you probably need to define '-s <scehma>' on the cmdline for the query agency.  Will default to 'TRIMET'")
-        args.schema = "TRIMET"
-
-    db = Database(**kwargs)
-    ss = shared_stops_parser(args.file, db, args.schema)
-    return args, db, ss
-
-
 def update_shared_stops():
-    args, db, ss = cmd_line_get_shared_stops()
+    args, db, ss = cmdline.shared_stops()
     update_db(ss, db)

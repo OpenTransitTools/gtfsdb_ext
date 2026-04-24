@@ -3,7 +3,7 @@ import inspect
 from mako.template import Template
 from mako.lookup import TemplateLookup
 
-from .process import cmd_line_get_shared_stops
+from . import cmdline
 from ..utils import *
 
 reset_logging() # NOTE: turn off all logging so it doesn't bleed into the report output
@@ -21,7 +21,7 @@ def generate_report(ss, src_feed_id, tmpl='report.mako'):
 
 
 def echo_shared_stops():
-    args, db, ss = cmd_line_get_shared_stops('echo-shared-stops')
+    args, db, ss = cmdline.shared_stops('echo-shared-stops')
     print(args)
     print()
     print(ss.get('unsupported'))
@@ -32,13 +32,13 @@ def echo_shared_stops():
 
 
 def create_report():
-    args, db, ss = cmd_line_get_shared_stops('shared-stops-report')
+    args, db, ss = cmdline.shared_stops('shared-stops-report')
     report = generate_report(ss, args.schema)
     print(report)
 
 
 def create_csv():
-    args, db, ss = cmd_line_get_shared_stops('shared-stops-csv')
+    args, db, ss = cmdline.shared_stops('shared-stops-csv')
     csv = generate_report(ss, args.schema, "csv.mako")
     print(csv)
 
