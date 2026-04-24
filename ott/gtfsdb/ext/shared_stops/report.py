@@ -27,7 +27,7 @@ def echo_shared_stops():
     print(ss.get('unsupported'))
     print(ss.get('not_active'))
     print()
-    for s in ss.get('shared'):
+    for s in ss.get('shared', []):
         print(s)
 
 
