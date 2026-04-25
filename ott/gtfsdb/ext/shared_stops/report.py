@@ -41,4 +41,3 @@ def create_csv():
     args, db, ss = cmdline.shared_stops('shared-stops-csv')
     csv = generate_report(ss, args.schema, "csv.mako")
     print(csv)
-

@@ -5,7 +5,23 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def to_stop_dict(rec, i=0, feed_id=None, def_agency=None, table="CURRENT_STOPS", distance=None):
+def list_schemas(db, table="stops"):
+    sql = f"SELECT schemaname FROM pg_catalog.pg_tables WHERE tablename = '{table}'"
+    rez = do_sql(db, sql)
+    ret_val = [' '.join(item) for item in rez]
+    return ret_val
+
+
+def clear_columns(db):
+    for table in ["stops", "current_stops"]:
+        for schema in list_schemas(db, table):
+            sql = f"UPDATE {schema}.{table} SET shared_stops = NULL"
+            #print(sql)
+            do_sql(db, sql)
+
+
+
+def to_stop_dict(rec, i=0, feed_id=None, def_agency=None, table="current_stops", distance=None):
     """
     stupid sql record mapping
     note: slightly fragile ... if gtfsdb model for stops changes (doesn't happen often), this might break
@@ -13,7 +29,7 @@ def to_stop_dict(rec, i=0, feed_id=None, def_agency=None, table="CURRENT_STOPS",
     ret_val = None
     try:
         a = def_agency
-        if table == "CURRENT_STOPS":
+        if table == "current_stops":
             a = rec[i+6]
         if a is None:
             a = def_agency
@@ -33,12 +49,12 @@ def to_stop_dict(rec, i=0, feed_id=None, def_agency=None, table="CURRENT_STOPS",
     return ret_val
 
 
-def set_shared_stop(db, shared_stops_val, feed_id, stop_id, table="STOPS"):
+def set_shared_stop(db, shared_stops_val, feed_id, stop_id, table="stops"):
     sql = f"UPDATE {feed_id}.{table} SET shared_stops = '{shared_stops_val}' WHERE stop_id = '{stop_id}'"
     return do_sql(db, sql)
 
 
-def find_stop(db, feed_id, stop_id, table="STOPS"):
+def find_stop(db, feed_id, stop_id, table="stops"):
     sql = f"select * from {feed_id}.{table} where stop_id = '{stop_id}'"
     return do_sql(db, sql)
 
@@ -53,18 +69,18 @@ def stop_distance(db, feed_id_a, stop_id_a, feed_id_b, stop_id_b):
     return do_sql(db, sql)
 
 
-def nearest_stops(db, feed_id, stop_id, src_feed_id, table="STOPS", limit=10):
+def nearest_stops(db, feed_id, stop_id, src_feed_id, table="stops", limit=10):
   sql = f"select ST_DistanceSphere(a.geom, b.geom) as meters_apart, a.* from {feed_id}.{table} a, {src_feed_id}.stops b where b.stop_id = '{stop_id}' order by 1 limit {limit}"
   return do_sql(db, sql)
 
 
-def nearest(db, feed_id, stop_id, dist, src_feed_id, table="STOPS"):
+def nearest(db, feed_id, stop_id, dist, src_feed_id, table="stops"):
     #import pdb; pdb.set_trace()
     sql = f"select * from {feed_id}.{table} where ST_DWithin(stop.geom, (select t.geom from {src_feed_id}.stops t where stop_id = '{stop_id}'), {dist})"
     return do_sql(db, sql)
 
 
-def agencies(db, feed_id, limit=50, table="AGENCY"):
+def agencies(db, feed_id, limit=50, table="agency"):
     sql = f"select * from {feed_id}.{table} limit {limit}"
     return do_sql(db, sql)
 
@@ -85,11 +101,11 @@ def get_nearest_record(db, feed_id, stop_id, query_dist, dist_desc, src_feed_id,
     from_current_stops = False
     from_stops_table = False
 
-    result = nearest(db, feed_id, stop_id, query_dist, src_feed_id, "CURRENT_STOPS")
+    result = nearest(db, feed_id, stop_id, query_dist, src_feed_id, "current_stops")
     if result:
         from_current_stops = True
     else:
-        result = nearest(db, feed_id, stop_id, query_dist, src_feed_id, "STOPS")
+        result = nearest(db, feed_id, stop_id, query_dist, src_feed_id, "stops")
         if result:
             from_stops_table = True
 

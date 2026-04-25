@@ -21,6 +21,10 @@ def make_cmdline(prog_name):
 def shared_stops(prog_name="shared-stops"):
     args, db = make_cmdline(prog_name)
 
+    if args.clear:
+        from .. import query
+        query.clear_columns(db)
+
     if args.do_parse:
         from . import process
         ss = process.shared_stops_parser(args.file, db, args.schema)
