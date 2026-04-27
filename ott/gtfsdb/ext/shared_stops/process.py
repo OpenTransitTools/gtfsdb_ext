@@ -55,7 +55,7 @@ def db_rec_to_shared_stop(rec, skip=0):
     feed = rec.get('feed_id')
 
     # step 2: find all the agencies for a given feed
-    age=rec.get('agencies')
+    age = rec.get('agencies')
     def_ag = "?"
     if age:
         if len(age) == 1:
@@ -223,6 +223,7 @@ def shared_stops_parser(csvfile, db, src_feed_id):
 
 
 def update_db(shared_stops, db):
+    #import pdb; pdb.set_trace()
     for ss in shared_stops.get('shared'):
         if ss.get('shared_id'):
             for s in ss.get('stops'):
