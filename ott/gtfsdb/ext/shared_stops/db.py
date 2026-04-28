@@ -1,6 +1,6 @@
 """
 NOTE - are these routines even used?  Moved here from query.py
-"""
+
 #from .. import query
 
 
@@ -58,3 +58,4 @@ def get_nearest_record(db, feed_id, stop_id, query_dist, dist_desc, src_feed_id,
             }
 
     return ret_val
+"""

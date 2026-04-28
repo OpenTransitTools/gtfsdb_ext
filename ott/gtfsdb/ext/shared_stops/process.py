@@ -222,8 +222,9 @@ def shared_stops_parser(csvfile, db, src_feed_id):
     return ret_val
 
 
-def update_db(shared_stops, db):
+def update_parsed_stops(file, db, schema):
     #import pdb; pdb.set_trace()
+    shared_stops = shared_stops_parser(file, db, schema)
     for ss in shared_stops.get('shared'):
         if ss.get('shared_id'):
             for s in ss.get('stops'):
@@ -232,8 +233,3 @@ def update_db(shared_stops, db):
                 if stop:
                     query.set_shared_stop(db, ss.get('shared_id'), feed_id, stop_id)
                     query.set_shared_stop(db, ss.get('shared_id'), feed_id, stop_id, "CURRENT_STOPS")
-
-
-def update_shared_stops():
-    args, db, ss = cmdline.shared_stops()
-    update_db(ss, db)

@@ -1,7 +1,7 @@
 from gtfsdb import Database
 from gtfsdb.scripts import get_args, make_kwargs
 
-ss_url="https://developer.trimet.org/ws/v3/sharedStops?csv=true&appid=8CBD14D520C6026CC7EEE56A9&showshared=true"
+ss_url = "https://developer.trimet.org/ws/v3/sharedStops?csv=true&appid=8CBD14D520C6026CC7EEE56A9&showshared=true"
 
 
 def make_cmdline(prog_name):
@@ -18,8 +18,15 @@ def make_cmdline(prog_name):
     return args, db
 
 
-def shared_stops(prog_name="shared-stops"):
-    args, db = make_cmdline(prog_name)
+def clear_shared_stops():
+    args, db = make_cmdline("clear-shared-stops")
+
+    from .. import query
+    query.clear_columns(db)
+
+
+def update_shared_stops():
+    args, db = make_cmdline("update-shared-stops")
 
     if args.clear:
         from .. import query
@@ -27,7 +34,8 @@ def shared_stops(prog_name="shared-stops"):
 
     if args.do_parse:
         from . import process
-        ss = process.shared_stops_parser(args.file, db, args.schema)
+        process.update_parsed_stops(args.file, db, args.schema)
     else:
-        ss = {}
-    return args, db, ss
+        from . import service
+        ss = service.call_service(args.ss_url)
+        service.update_parsed_stops(ss, db)

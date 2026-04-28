@@ -4,9 +4,10 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 
 from . import cmdline
-from ..utils import *
+from . import process
+from ..utils import reset_logging
 
-reset_logging() # NOTE: turn off all logging so it doesn't bleed into the report output
+reset_logging()  # NOTE: turn off all logging so it doesn't bleed into the report output
 this_module_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
 
@@ -20,24 +21,42 @@ def generate_report(ss, src_feed_id, tmpl='report.mako'):
     return report
 
 
-def echo_shared_stops():
-    args, db, ss = cmdline.shared_stops('echo-shared-stops')
-    print(args)
-    print()
-    print(ss.get('unsupported'))
-    print(ss.get('not_active'))
-    print()
-    for s in ss.get('shared', []):
-        print(s)
-
-
 def create_report():
-    args, db, ss = cmdline.shared_stops('shared-stops-report')
+    args, db = cmdline.make_cmdline('shared-stops-report')
+    ss = process.shared_stops_parser(args.file, db, args.schema)
     report = generate_report(ss, args.schema)
     print(report)
+    if not args.do_parse:
+        # note: if here, then maybe warn that the shared stops were parsed locally
+        pass
 
 
 def create_csv():
-    args, db, ss = cmdline.shared_stops('shared-stops-csv')
+    args, db = cmdline.make_cmdline('shared-stops-csv')
+    ss = process.shared_stops_parser(args.file, db, args.schema)
     csv = generate_report(ss, args.schema, "csv.mako")
     print(csv)
+    if not args.do_parse:
+        # note: if here, then maybe warn that the shared stops were parsed locally
+        pass
+
+
+def echo_shared_stops():
+    args, db = cmdline.make_cmdline('echo-shared-stops')
+    print(args)
+    print()
+
+    stops = []
+    if args.do_parse:
+        ss = process.shared_stops_parser(args.file, db, args.schema)
+        print(ss.get('unsupported'))
+        print(ss.get('not_active'))
+        stops = ss.get('shared', [])
+    else:
+        from . import service
+        stops = service.call_service(args.ss_url)
+
+    print()
+    for s in stops:
+        print(s)
+    print()
