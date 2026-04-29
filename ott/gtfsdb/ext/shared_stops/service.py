@@ -2,14 +2,17 @@ from ott.utils import file_utils
 from ott.utils import web_utils
 from .. import query
 
+import logging
+log = logging.getLogger(__name__)
+
 
 def put_db(db, ss):
     try:
         """ CTRAN:4 -> CTRAN,4 """
-        feed_id, stop_id = ss['stop'].split(":", 1)
+        #import pdb; pdb.set_trace()
+        feed_id, stop_id = ss['feed_stop_id'].split(":", 1)
         shared_string = ss['shared_string']
 
-        #import pdb; pdb.set_trace()
         z = query.find_stop(db, feed_id, stop_id, table="current_stops")
         if z is None or len(z) < 1:
             print(f"note: {feed_id}.{stop_id} doesn't seem to exist to add {shared_string}")
@@ -17,7 +20,7 @@ def put_db(db, ss):
         query.set_shared_stop(db, shared_string, feed_id, stop_id, "stops")
         query.set_shared_stop(db, shared_string, feed_id, stop_id, "current_stops")
     except Exception as e:
-        print(e)
+        log.warning(e)
 
 
 def update_parsed_stops(sstops, db):
