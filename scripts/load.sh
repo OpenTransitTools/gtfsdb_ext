@@ -58,7 +58,7 @@ if [ -f $chk ]; then
   cd -
   echo; echo;
 
-  echo "step 5: run the shared stops population (run from gtfsdb_ext/ home dir)"
+  echo "step 5: load the shared stops data "
   echo "***********************************************************************"
   cd $LOADDIR/../
 
@@ -70,16 +70,6 @@ if [ -f $chk ]; then
 
   echo " step 5b: load / update shared stops"
   cmd="poetry run update-shared-stops -s ${required_feed} -d $ott_url ${SSCSV}"
-  echo $cmd
-  eval $cmd
-
-  echo " step 5c: shared stops report"
-  cmd="poetry run shared-stops-report -d $ott_url ${SSCSV} > ${ext_data_dir}/shared_stops.html"
-  echo $cmd
-  eval $cmd
-
-  echo " step 5d: shared stops .csv"
-  cmd="poetry run shared-stops-csv -d $ott_url ${SSCSV} > ${ext_data_dir}/shared_stops.csv"
   echo $cmd
   eval $cmd
 
