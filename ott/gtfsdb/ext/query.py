@@ -12,13 +12,13 @@ def agencies(db, feed_id, limit=50, table="agency"):
 
 def list_schemas(db, table=None):
     """ return list of strings representing various schemes (optional filter those schemas w/a given table) """
+    #import pdb; pdb.set_trace()
     sql = "SELECT schemaname FROM pg_catalog.pg_tables"
     if table:
          sql = f"{sql} WHERE tablename = '{table}'"
     log.debug(sql)
-
     rez = do_sql(db, sql)
-    ret_val = [' '.join(item) for item in rez]
+    ret_val = [' '.join(item) for item in rez] if rez else []
     return ret_val
 
 
@@ -35,7 +35,6 @@ def clear_columns(db, column="shared_stops", tables=["stops", "current_stops"]):
 
 
 def set_shared_stop(db, shared_stops_val, feed_id, stop_id, table="stops"):
-    #import pdb; pdb.set_trace()
     sql = f"UPDATE {feed_id}.{table} SET shared_stops = '{shared_stops_val}' WHERE stop_id = '{stop_id}'"
     return do_sql(db, sql)
 
