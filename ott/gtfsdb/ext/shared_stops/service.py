@@ -6,19 +6,25 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def put_db(db, ss):
+def put_db(db, feed_id, stop_id, shared_string, table):
     try:
-        """ CTRAN:4 -> CTRAN,4 """
+        z = query.find_stop(db, feed_id, stop_id, table)
+        if z is None or len(z) < 1:
+            print(f"note: {feed_id}.{stop_id} in table {table} doesn't seem to exist to add {shared_string}")
+
+        query.set_shared_stop(db, shared_string, feed_id, stop_id, table)
+    except Exception as e:
+        log.warning(e)
+
+
+def put(db, ss):
+    try:
         #import pdb; pdb.set_trace()
+        """ CTRAN:4 -> CTRAN,4 """
         feed_id, stop_id = ss['feed_stop_id'].split(":", 1)
         shared_string = ss['shared_string']
-
-        z = query.find_stop(db, feed_id, stop_id, table="current_stops")
-        if z is None or len(z) < 1:
-            print(f"note: {feed_id}.{stop_id} doesn't seem to exist to add {shared_string}")
-        
-        query.set_shared_stop(db, shared_string, feed_id, stop_id, "stops")
-        query.set_shared_stop(db, shared_string, feed_id, stop_id, "current_stops")
+        put_db(db, feed_id, stop_id, shared_string, "stops")
+        put_db(db, feed_id, stop_id, shared_string, "current_stops")
     except Exception as e:
         log.warning(e)
 
@@ -28,7 +34,7 @@ def update_parsed_stops(sstops, db):
     put data from service into stops and current_stops tables
     """
     for ss in sstops:
-        put_db(db, ss)
+        put(db, ss)
 
 
 def call_service(ss_url):
