@@ -1,3 +1,4 @@
+import re
 from ott.utils import file_utils
 from ott.utils import web_utils
 from .. import query
@@ -6,13 +7,28 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def put_db(db, feed_id, stop_id, shared_string, table):
+def put_db(db, feed_id, stop_id, shared_string, table, test=False):
     try:
-        z = query.find_stop(db, feed_id, stop_id, table)
-        if z is None or len(z) < 1:
-            print(f"note: {feed_id}.{stop_id} in table {table} doesn't seem to exist to add {shared_string}")
+        add_ss = True
 
-        query.set_shared_stop(db, shared_string, feed_id, stop_id, table)
+        # step 1: check that the stop exists, and report any that aren't there
+        if test:
+            z = query.find_stop(db, feed_id, stop_id, table)
+            if z is None or len(z) < 1:
+                print(f"note: {feed_id}.{table} lacks stop '{stop_id}', so can't add shared '{shared_string}'")
+
+        # step 2: make sure the TRIMET stop is there (if not, we don't want to filter the agency stop from the stops layer)
+        if feed_id != "TRIMET":
+            match = re.search(r"TRIMET:(.*?),", shared_string)
+            tm_stop = match.group(1)
+            z = query.find_stop(db, "TRIMET", tm_stop, table)
+            if z is None or len(z) < 1:
+                print(f"note: {tm_stop} not in TRIMET.{table}, won't add '{shared_string}' to {feed_id}.{table} for {stop_id}")
+                add_ss = False
+
+        # step 3: update the db with this shared stop string
+        if add_ss:
+            query.set_shared_stop(db, shared_string, feed_id, stop_id, table)
     except Exception as e:
         log.warning(e)
 
@@ -24,7 +40,7 @@ def put(db, ss):
         feed_id, stop_id = ss['feed_stop_id'].split(":", 1)
         shared_string = ss['shared_string']
         put_db(db, feed_id, stop_id, shared_string, "stops")
-        put_db(db, feed_id, stop_id, shared_string, "current_stops")
+        put_db(db, feed_id, stop_id, shared_string, "current_stops", True)
     except Exception as e:
         log.warning(e)
 
