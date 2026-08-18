@@ -1,6 +1,6 @@
 import csv
 from gtfsdb import Database
-from gtfsdb.scripts import get_args
+from gtfsdb.scripts import make_args
 from gtfsdb import *
 from . import utils
 
@@ -104,7 +104,7 @@ def query(feed, output, url="postgresql://ott:ott@localhost:5432/ott"):
 
 def main():
     #import pdb; pdb.set_trace()
-    args, kwargs = get_args(prog_name='pelias-stops', def_db="postgresql://ott:ott@localhost:5432/ott", def_schema='SMART')
+    args, kwargs = make_args(prog_name='pelias-stops', def_db="postgresql://ott:ott@localhost:5432/ott", def_schema='SMART')
     if args.file.lower() in ("p", "print"):
         import io
         output = io.StringIO()
