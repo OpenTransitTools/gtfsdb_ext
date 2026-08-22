@@ -8,8 +8,8 @@ LOADDIR=`dirname $0`
 . $LOADDIR/schemas.sh
 . $LOADDIR/views.sh
 
-required_feed=${1:-TRIMET}
-effective_date=${2:-"today"}
+effective_date=${1:-"today"}
+required_feed=${2:-"TRIMET"}
 
 # make dir for shared stops data, etc...
 ext_data_dir="${LOADDIR}/../data/${required_feed,,}"
@@ -59,7 +59,7 @@ if [ -f $chk ]; then
 
       # reload the current tables
       # note: '-rid a' will get rid of route_id appended a, ala 200a -> 200
-      cmd="poetry run gtfsdb-current-load -g -d $ott_url -s ${name} ${effective_date}"
+      cmd="poetry run gtfsdb-current-load -rid a -g -d $ott_url -s ${name} ${effective_date}"
       echo "  $cmd"
       eval $cmd
     else
