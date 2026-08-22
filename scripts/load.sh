@@ -9,6 +9,9 @@ LOADDIR=`dirname $0`
 . $LOADDIR/views.sh
 
 required_feed=${1:-TRIMET}
+effective_date=${2:-"today"}
+
+# make dir for shared stops data, etc...
 ext_data_dir="${LOADDIR}/../data/${required_feed,,}"
 if [ ! $ext_data_dir ]; then
   # the ,, to lower above doesn't work on Mac
@@ -18,6 +21,7 @@ echo mkdir $ext_data_dir
 mkdir -p $ext_data_dir
 chmod 755 $ext_data_dir
 
+# load the db
 chk=${GTFS_DIR}/${required_feed}.gtfs.zip
 if [ -f $chk ]; then
   echo "INFO: starting the load as file $chk *does* exist."
@@ -46,13 +50,24 @@ if [ -f $chk ]; then
   for f in ${GTFS_DIR}/*gtfs.zip
   do
     name=$(feed_name_from_zip $f)
-    CURRENT_FLAG="-cta"
+
     if [ ${name} == "trimet" ] || [ ${name} == "other-agency-here" ]; then
-      CURRENT_FLAG="-ct"  # actually use date to calculate current views
+      # process current tables, so load then do the current tables
+      cmd="poetry run gtfsdb-load -c -ct -g -d $ott_url -s ${name} ${f}"
+      echo "  $cmd"
+      eval $cmd
+
+      # reload the current tables
+      # note: '-rid a' will get rid of route_id appended a, ala 200a -> 200
+      cmd="poetry run gtfsdb-current-load -g -d $ott_url -s ${name} ${effective_date}"
+      echo "  $cmd"
+      eval $cmd
+    else
+      # put all gtfs stops and routes data in current tables
+      cmd="poetry run gtfsdb-load -c -cta -g -d $ott_url -s ${name} ${f}"
+      echo "  $cmd"
+      eval $cmd
     fi
-    cmd="poetry run gtfsdb-load -c ${CURRENT_FLAG} -g -d $ott_url -s ${name} ${f}"
-    echo "  $cmd"
-    eval $cmd
     sleep 1
   done
   cd -
