@@ -58,8 +58,8 @@ if [ -f $chk ]; then
       eval $cmd
 
       # reload the current tables
-      # note: "-rid a" will get rid of route_id appended a, ala 200a -> 200
-      cmd="poetry run gtfsdb-current-load -rid a -g -d $ott_url -s ${name} ${effective_date}"
+      # note: "-rid a b" will get rid of route_id appended a, ala 200a -> 200
+      cmd="poetry run gtfsdb-current-load -rid a b -g -d $ott_url -s ${name} ${effective_date}"
       echo "  $cmd"
       eval $cmd
     else
