@@ -10,11 +10,11 @@ LOADDIR=`dirname $0`
 
 effective_date=${1:-"today"}
 required_feed=${2:-"TRIMET"}
-
+#:''
 # make dir for shared stops data, etc...
 ext_data_dir="${LOADDIR}/../data/${required_feed,,}"
 if [ ! $ext_data_dir ]; then
-  # the ,, to lower above doesn't work on Mac
+  # the ,, to lower above does not work on Mac
   ext_data_dir="${LOADDIR}/../data/${required_feed}"
 fi
 echo mkdir $ext_data_dir
@@ -34,7 +34,7 @@ if [ -f $chk ]; then
   echo "********************************"
   $LOADDIR/patch_gtfs.sh
 
-  echo "step 2: create 'current' schema (in addition to gtfs agency schemas)"
+  echo "step 2: create *current* schema (in addition to gtfs agency schemas)"
   echo "********************************************************************"
   make_schema "current"
   load_schemas
@@ -58,7 +58,7 @@ if [ -f $chk ]; then
       eval $cmd
 
       # reload the current tables
-      # note: '-rid a' will get rid of route_id appended a, ala 200a -> 200
+      # note: "-rid a" will get rid of route_id appended a, ala 200a -> 200
       cmd="poetry run gtfsdb-current-load -rid a -g -d $ott_url -s ${name} ${effective_date}"
       echo "  $cmd"
       eval $cmd
