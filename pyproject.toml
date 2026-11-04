@@ -3,7 +3,7 @@ virtualenvs.options.system-site-packages = true
 
 [tool.poetry]
 name = "gtfsdb_ext"
-version = "0.0.1"
+version = "0.0.2"
 description = "gtfsdb postprocess tools"
 authors = ["Frank Purcell <fxpurcell@gmail.com>"]
 license = "Mozella 2.x"
@@ -11,10 +11,10 @@ readme = "README.md"
 packages = [{include = "ott/gtfsdb/ext"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
-mako = "^1.1.6"
-urllib3 = "^2.6.2"
-psycopg2-binary = "^2.9.1"
+python = "^3.12"
+mako = "*"
+urllib3 = "*"
+psycopg2-binary = "*"
 
 #"ott.utils" = { path = "../utils/", develop = true }
 #gtfsdb = { path = "../gtfsdb/", develop = true }
