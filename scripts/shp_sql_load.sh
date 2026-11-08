@@ -30,7 +30,7 @@ function load_shp_sql() {
     eval $cmd
 
     if [[ $s == *"service_district.sql" ]]; then
-      sdir=${s%/*.shp}
+      sdir=${s%/*.sql}
       ada_file=${sdir}/${ADA_NAME}.sql
       cmd="${SQDIR}/make_ada.sh ${schema} ${ADA_NAME} ${ada_file}"
       echo
